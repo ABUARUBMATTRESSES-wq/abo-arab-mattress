@@ -43,7 +43,7 @@ export default function Footer() {
           <p className="mb-4 font-extrabold text-gold">تواصل معنا</p>
           <ul className="space-y-3 text-sm text-white/70">
             <li><a href={`tel:${siteConfig.phoneDisplay}`} className="flex items-center gap-2"><Phone size={16} className="shrink-0 text-gold" /><span dir="ltr">{siteConfig.phoneDisplay}</span></a></li>
-            <li><a href={buildWhatsappLink("السلام عليكم، حابب أستفسر عن منتجاتكم")} target="_blank" rel="noreferrer" className="flex items-center gap-2"><MessageCircle size={16} className="shrink-0 text-gold" /> واتساب الشغل</a></li>
+            <li><a href={buildWhatsappLink("السلام عليكم، حابب أستفسر عن منتجاتكم")} target="_blank" rel="noreferrer" className="flex items-center gap-2"><MessageCircle size={16} className="shrink-0 text-gold" /> تواصل معنا عبر واتساب</a></li>
             <li><a href={siteConfig.mapsUrl} target="_blank" rel="noreferrer" className="flex items-center gap-2 hover:text-white"><MapPin size={16} className="shrink-0 text-gold" /><span>{siteConfig.address}<span className="mt-1 block text-xs text-gold underline underline-offset-4">الوصول للمعرض</span></span></a></li>
           </ul>
         </div>
