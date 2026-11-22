@@ -165,7 +165,7 @@ export const constructionClassLabels: Record<ConstructionClass, string> = {
 
 export function getConstructionClass(p: Product): ConstructionClass | null {
   if (p.category !== "mattresses") return null;
-  const memoryFoam = p.name.includes("ميموري") || p.shortDescription.includes("ميموري");
+  const memoryFoam = /ميمور[يى]/.test(p.name) || /ميمور[يى]/.test(p.shortDescription);
   const medical = p.name.includes("طبي");
   const s = p.springType;
   if (s === "سوست متصلة" || s === "مراتب متصلة (أمريكي)" || s === "مراتب متصلة ألماني") return "connected";
