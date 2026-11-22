@@ -38,7 +38,7 @@ export default function CartPage() {
   });
   const [submitted, setSubmitted] = useState(false);
 
-  const shippingFee = subtotal >= siteConfig.freeShippingThreshold || items.length === 0 ? 0 : siteConfig.shippingFee;
+  const shippingFee = items.length === 0 ? 0 : (customer.governorate === governorates[0] || customer.governorate === governorates[1] ? (subtotal >= siteConfig.freeShippingThreshold ? 0 : siteConfig.shippingFee) : ((items.filter(i => i.category === "mattresses").reduce((acc, i) => acc + i.quantity, 0) || items.reduce((acc, i) => acc + i.quantity, 0)) * 300));
   const total = subtotal + shippingFee;
   const remainingForFreeShipping = Math.max(0, siteConfig.freeShippingThreshold - subtotal);
   const progressPercent = Math.min(100, (subtotal / siteConfig.freeShippingThreshold) * 100);
