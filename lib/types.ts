@@ -1,14 +1,22 @@
-export type CategorySlug = "mattresses" | "pillows" | "protectors" | "bedding";
+export type CategorySlug = "mattresses" | "toppers" | "pillows" | "protectors" | "bedding";
 
-export type SpringType = "اسفنج ضغط عالي" | "سوست لفافة" | "سوست بونيل" | "هجين (سوست + اسفنج)" | "بدون سوست";
+export type SpringType =
+  | "سوست متصلة"
+  | "سوست منفصلة"
+  | "مراتب منفصلة(بوكيت)"
+  | "مراتب متصلة ألماني"
+  | "مراتب متصلة (أمريكي)"
+  | "مراتب بدون سوست"
+  | "مراتب رول"
+  | "فوم";
 
 export type Firmness = "طري" | "متوسط" | "متين" | "صلب";
 
 export interface SizeOption {
   id: string;
   label: string; // "190×120"
-  widthCm: number;
-  lengthCm: number;
+  widthCm?: number; // قد لا تكون الأبعاد معلومة لبعض الاختيارات
+  lengthCm?: number;
 }
 
 export interface HeightOption {
@@ -40,9 +48,10 @@ export interface Product {
   category: CategorySlug;
   shortDescription: string;
   description: string;
+  readableDescription?: { intro: string; points: string[] };
   images: string[]; // روابط الصور (placeholders)
-  springType: SpringType;
-  firmness: Firmness;
+  springType?: SpringType; // يملأ فقط عندما يكون موثقاً في الكتالوج
+  firmness?: Firmness;
   warrantyYears: number;
   sizes: SizeOption[];
   heights: HeightOption[];
@@ -60,6 +69,7 @@ export interface Product {
 
 export interface CartItem {
   productId: string;
+  category?: string; // يستخدم في حساب الشحن
   productName: string;
   slug: string;
   image: string;
