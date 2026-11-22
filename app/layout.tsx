@@ -9,7 +9,7 @@ import { siteConfig } from "@/lib/config";
 // عشان نضمن نجاح البناء (build) حتى في بيئات بدون اتصال وقت الـ build.
 export const metadata: Metadata = {
   title: `${siteConfig.brandNameAr} | Abo Arab Mattress`,
-  description: "مراتب ومفروشات أبو عرب — جودة فندقية، ضمان حقيقي، توصيل لكل محافظات مصر، والدفع عند الاستلام.",
+  description: "تصفح المراتب والمخدات والخداديات وواقي المرتبة وطبقات التطرية من أبو عرب.",
   keywords: ["مراتب", "مفروشات", "مخدات", "واقي مرتبة", "أبو عرب", "مراتب طبية"],
 };
 
