@@ -4,12 +4,13 @@ import { SlidersHorizontal, X } from "lucide-react";
 import { useState } from "react";
 import { categories, springTypesList, firmnessList, allHeightsList, allSizesList } from "@/lib/products";
 import { CategorySlug, Firmness, SpringType } from "@/lib/types";
-import { brands, BrandId } from "@/lib/brands";
+import { brands, BrandId, constructionClassesList, constructionClassLabels, ConstructionClass } from "@/lib/brands";
 
 export interface FilterState {
   category: CategorySlug | "all";
   brand: BrandId | "all";
   springType: SpringType | "all";
+  construction: ConstructionClass | "all";
   firmness: Firmness | "all";
   heightId: string | "all";
   sizeId: string | "all";
@@ -19,6 +20,7 @@ export const defaultFilters: FilterState = {
   category: "all",
   brand: "all",
   springType: "all",
+  construction: "all",
   firmness: "all",
   heightId: "all",
   sizeId: "all",
@@ -81,7 +83,22 @@ export default function ShopFilters({
       </div>
       )}
 
+      <div>
+        <p className="mb-2 text-sm font-extrabold text-navy">التصنيف حسب التصنيع</p>
+        <div className="flex flex-wrap gap-2">
+          <FilterChip active={filters.construction === "all"} onClick={() => update({ construction: "all" })}>
+            الكل
+          </FilterChip>
+          {constructionClassesList.map((c) => (
+            <FilterChip key={c} active={filters.construction === c} onClick={() => update({ construction: c })}>
+              {constructionClassLabels[c]}
+            </FilterChip>
+          ))}
+        </div>
+      </div>
+
       {firmnessList.length > 0 && (
+
       <div>
         <p className="mb-2 text-sm font-extrabold text-navy">درجة الصلابة</p>
         <div className="flex flex-wrap gap-2">
