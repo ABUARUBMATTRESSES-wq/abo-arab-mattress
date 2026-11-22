@@ -1,7 +1,8 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
+import Script from "next/script";
 import { Trash2, Minus, Plus, Truck, ShoppingBag, MessageCircle } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -12,6 +13,8 @@ import { trackEvent } from "@/lib/pixel";
 import { saveLead } from "@/lib/leads";
 import { CustomerInfo } from "@/lib/types";
 import { calculateShipping, isCairoOrGiza } from "@/lib/shipping";
+
+const TURNSTILE_SITE_KEY = "0x4AAAAAAGNxoLS_4jeZj30N";
 
 function normalizePhone(value: string): string {
   return value.replace(/[٠-٩]/g, d => String(d.charCodeAt(0) - 0x660))
@@ -45,6 +48,14 @@ export default function CartPage() {
     notes: "",
   });
   const [submitted, setSubmitted] = useState(false);
+  const [turnstileToken, setTurnstileToken] = useState("");
+  const [saving, setSaving] = useState(false);
+  const [orderError, setOrderError] = useState("");
+
+  useEffect(() => {
+    (window as unknown as Record<string, unknown>).onTurnstileOk = (token: string) => setTurnstileToken(token);
+    (window as unknown as Record<string, unknown>).onTurnstileGone = () => setTurnstileToken("");
+  }, []);
 
   const shippingFee = calculateShipping(items, subtotal, customer.governorate);
   const regionalFreeShipping = isCairoOrGiza(customer.governorate);
@@ -60,10 +71,55 @@ export default function CartPage() {
     [items, customer]
   );
 
-  const handleCheckout = () => {
-    if (!canSubmit) return;
+  const handleCheckout = async () => {
+    if (!canSubmit || saving) return;
+    if (!turnstileToken) {
+      setOrderError("من فضلك أكمل خطوة التحقق الأمني بالأسفل قبل إتمام الطلب.");
+      return;
+    }
+    setSaving(true);
+    setOrderError("");
 
     const orderId = `AA-${Date.now().toString().slice(-6)}`;
+
+    // The order must be stored server-side before the WhatsApp handoff.
+    // On any failure we stop here: no success screen, no WhatsApp window.
+    try {
+      const res = await fetch("/api/order", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({
+          id: orderId,
+          name: (customer.name || "").trim(),
+          phone: normalizePhone(customer.phone),
+          governorate: customer.governorate,
+          address: (customer.address || "").trim(),
+          notes: (customer.notes || "").trim(),
+          items: items.map((i) => ({
+            productId: i.productId,
+            sizeLabel: i.sizeLabel,
+            heightLabel: i.heightLabel,
+            quantity: i.quantity,
+          })),
+          total,
+          turnstileToken,
+        }),
+      });
+      const result = await res.json().catch(() => null);
+      if (!res.ok || !result || !result.ok) {
+        (window as unknown as { turnstile?: { reset: () => void } }).turnstile?.reset();
+        setTurnstileToken("");
+        setOrderError("حصلت مشكلة أثناء تسجيل الطلب، والطلب لم يُحفظ ولم يُفتح واتساب. جرب مرة أخرى، ولو المشكلة مستمرة تواصل معنا على واتساب.");
+        return;
+      }
+    } catch {
+      (window as unknown as { turnstile?: { reset: () => void } }).turnstile?.reset();
+      setTurnstileToken("");
+      setOrderError("فشل الاتصال بالخادم، والطلب لم يُحفظ ولم يُفتح واتساب. تأكد من اتصالك بالإنترنت وجرب مرة أخرى.");
+      return;
+    } finally {
+      setSaving(false);
+    }
 
     saveLead({
       id: orderId,
@@ -142,6 +198,7 @@ export default function CartPage() {
   return (
     <>
       <Header />
+      <Script src="https://challenges.cloudflare.com/turnstile/v0/api.js" strategy="afterInteractive" />
       <main className="container-app py-10">
         <h1 className="section-title mb-8">سلة المشتريات</h1>
 
@@ -312,9 +369,18 @@ export default function CartPage() {
                 />
               </div>
 
-              <button onClick={handleCheckout} disabled={!canSubmit} className="btn-whatsapp w-full disabled:opacity-40">
-                <MessageCircle size={20} /> إتمام الطلب عبر واتساب
+              <div
+                className="cf-turnstile"
+                data-sitekey={TURNSTILE_SITE_KEY}
+                data-callback="onTurnstileOk"
+                data-expired-callback="onTurnstileGone"
+                data-error-callback="onTurnstileGone"
+                data-theme="light"
+              ></div>
+              <button onClick={handleCheckout} disabled={!canSubmit || saving} className="btn-whatsapp w-full disabled:opacity-40">
+                <MessageCircle size={20} /> {saving ? "جاري تسجيل الطلب..." : "إتمام الطلب عبر واتساب"}
               </button>
+              {orderError && <p role="alert" className="text-center text-xs font-bold leading-6 text-red-600">{orderError}</p>}
               {!canSubmit && <p className="text-center text-xs text-navy/50">من فضلك أكمل بيانات التوصيل الأساسية</p>}
             </div>
           </div>
