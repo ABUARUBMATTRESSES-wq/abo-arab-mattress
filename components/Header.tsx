@@ -80,17 +80,18 @@ export default function Header() {
         </div>
       </div>
 
-      {searchOpen && (
-        <div className="border-t border-navy/10 bg-white">
+      {(true) && (
+        <div className={`${searchOpen ? "" : "sm:hidden"} border-t border-navy/10 bg-white`}>
           <div className="container-app py-3">
-            <form action="/shop" method="get" className="flex items-center gap-2">
+            <form action="/shop" method="get" onSubmit={() => { setSearchOpen(false); setOpen(false); }} role="search" className="flex items-center gap-2">
               <input
                 name="q"
-                type="text"
+                aria-label="البحث عن منتج"
+                type="search"
                 placeholder="دور على مرتبة، مخدة، واقي مرتبة..."
                 className="w-full rounded-xl border border-navy/15 px-4 py-2.5 text-sm outline-none focus:border-gold"
               />
-              <button type="submit" className="btn-gold !px-4 !py-2.5">
+              <button type="submit" aria-label="ابحث" className="btn-gold !px-4 !py-2.5">
                 <Search size={18} />
               </button>
             </form>
