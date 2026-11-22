@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { Star, Scale, Sparkles } from "lucide-react";
 import { Product } from "@/lib/types";
+import { getDefaultVariant } from "@/lib/products";
 import PriceTag from "./PriceTag";
 
 export default function ProductCard({
@@ -16,9 +17,7 @@ export default function ProductCard({
   isComparing?: boolean;
   onToggleCompare?: (id: string) => void;
 }) {
-  const defaultVariant =
-    product.variantPrices.find((v) => v.sizeId === product.sizes[0]?.id && v.heightId === product.heights[0]?.id) ??
-    product.variantPrices[0];
+  const defaultVariant = getDefaultVariant(product);
 
   return (
     <div className="card group relative flex flex-col overflow-hidden transition hover:-translate-y-1 hover:border-gold">
