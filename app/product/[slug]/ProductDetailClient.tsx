@@ -17,6 +17,16 @@ export default function ProductDetailClient({ product }: { product: Product }) {
   const [activeImage, setActiveImage] = useState(0);
   const [sizeId, setSizeId] = useState(product.sizes[0]?.id);
   const [heightId, setHeightId] = useState(product.heights[0]?.id);
+
+  // Pre-select the variant passed in the URL (e.g. from a cheaper-alternative card).
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const s = params.get("size");
+    const h = params.get("height");
+    if (s && product.sizes.some((x) => x.id === s)) setSizeId(s);
+    if (h && product.heights.some((x) => x.id === h)) setHeightId(h);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [product.id]);
   const [quantity, setQuantity] = useState(1);
   const [addedMessage, setAddedMessage] = useState(false);
   const { addItem } = useCart();
@@ -271,7 +281,7 @@ export default function ProductDetailClient({ product }: { product: Product }) {
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {cheaperAlternatives.map((alt) => (
                 <div key={alt.product.id} className="card flex flex-col overflow-hidden">
-                  <Link href={`/product/${alt.product.slug}`} className="relative block aspect-[4/3] overflow-hidden bg-navy/5">
+                  <Link href={`/product/${alt.product.slug}?size=${sizeId}&height=${heightId}`} className="relative block aspect-[4/3] overflow-hidden bg-navy/5">
                     <img
                       src={alt.product.images[0]}
                       alt={alt.product.name}
@@ -280,16 +290,18 @@ export default function ProductDetailClient({ product }: { product: Product }) {
                     />
                   </Link>
                   <div className="flex flex-1 flex-col gap-2 p-4">
-                    <Link href={`/product/${alt.product.slug}`} className="font-extrabold text-navy hover:text-gold-dark">
+                    <Link href={`/product/${alt.product.slug}?size=${sizeId}&height=${heightId}`} className="font-extrabold text-navy hover:text-gold-dark">
                       {alt.product.name}
                     </Link>
                     <p className="text-xs text-navy/60">
                       متوفر بنفس الاختيار: {alt.sizeLabel} / {alt.heightLabel}
                     </p>
                     <p className="text-sm">
-                      <span className="font-extrabold text-navy">{formatPrice(alt.variant.price)} ج.م</span>{" "}
-                      <span className="text-navy/50 line-through">{formatPrice(alt.currentPrice)} ج.م</span>{" "}
-                      <span className="badge-gold">وفّر {formatPrice(alt.currentPrice - alt.variant.price)} ج.م</span>
+                      <span className="font-extrabold text-navy">{formatPrice(alt.variant.price)} ج.م</span>
+                    </p>
+                    <p className="text-xs leading-5 text-navy/60">
+                      أقل بـ {formatPrice(alt.currentPrice - alt.variant.price)} ج.م من سعر هذا المنتج (
+                      {formatPrice(alt.currentPrice)} ج.م) لنفس المقاس والارتفاع.
                     </p>
                     {alt.differences.length > 0 && (
                       <div className="rounded-xl bg-paper p-3">
