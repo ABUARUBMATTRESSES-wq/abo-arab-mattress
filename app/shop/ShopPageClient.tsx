@@ -10,7 +10,7 @@ import CompareBar from "@/components/CompareBar";
 import CompareTable from "@/components/CompareTable";
 import ShopFilters, { defaultFilters, FilterState } from "@/components/ShopFilters";
 import { products } from "@/lib/products";
-import { getProductBrandId, BrandId } from "@/lib/brands";
+import { getProductBrandId, BrandId, getConstructionClass, ConstructionClass } from "@/lib/brands";
 
 export default function ShopPageClient() {
   const searchParams = useSearchParams();
@@ -32,6 +32,10 @@ export default function ShopPageClient() {
     if (brand) {
       setFilters((prev) => ({ ...prev, brand: brand as BrandId }));
     }
+    const construction = searchParams.get("construction");
+    if (construction) {
+      setFilters((prev) => ({ ...prev, construction: construction as ConstructionClass }));
+    }
     if (compareParam === "1") setCompareMode(true);
     if (idsParam) setCompareIds(idsParam.split(",").filter(Boolean).slice(0, 3));
     if (q) setSearchTerm(q);
@@ -43,6 +47,7 @@ export default function ShopPageClient() {
       if (filters.category !== "all" && p.category !== filters.category) return false;
       if (filters.brand !== "all" && getProductBrandId(p.name) !== filters.brand) return false;
       if (filters.springType !== "all" && p.springType !== filters.springType) return false;
+      if (filters.construction !== "all" && getConstructionClass(p) !== filters.construction) return false;
       if (filters.firmness !== "all" && p.firmness !== filters.firmness) return false;
       if (!p.variantPrices.some((v) =>
         (filters.heightId === "all" || v.heightId === filters.heightId) &&
