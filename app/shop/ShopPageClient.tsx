@@ -10,6 +10,7 @@ import CompareBar from "@/components/CompareBar";
 import CompareTable from "@/components/CompareTable";
 import ShopFilters, { defaultFilters, FilterState } from "@/components/ShopFilters";
 import { products } from "@/lib/products";
+import { getProductBrandId, BrandId } from "@/lib/brands";
 
 export default function ShopPageClient() {
   const searchParams = useSearchParams();
@@ -20,12 +21,16 @@ export default function ShopPageClient() {
 
   useEffect(() => {
     const category = searchParams.get("category");
+    const brand = searchParams.get("brand");
     const q = searchParams.get("q");
     const compareParam = searchParams.get("compare");
     const idsParam = searchParams.get("ids");
 
     if (category) {
       setFilters((prev) => ({ ...prev, category: category as FilterState["category"] }));
+    }
+    if (brand) {
+      setFilters((prev) => ({ ...prev, brand: brand as BrandId }));
     }
     if (compareParam === "1") setCompareMode(true);
     if (idsParam) setCompareIds(idsParam.split(",").filter(Boolean).slice(0, 3));
@@ -36,6 +41,7 @@ export default function ShopPageClient() {
   const filteredProducts = useMemo(() => {
     return products.filter((p) => {
       if (filters.category !== "all" && p.category !== filters.category) return false;
+      if (filters.brand !== "all" && getProductBrandId(p.name) !== filters.brand) return false;
       if (filters.springType !== "all" && p.springType !== filters.springType) return false;
       if (filters.firmness !== "all" && p.firmness !== filters.firmness) return false;
       if (!p.variantPrices.some((v) =>

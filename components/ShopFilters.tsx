@@ -4,9 +4,11 @@ import { SlidersHorizontal, X } from "lucide-react";
 import { useState } from "react";
 import { categories, springTypesList, firmnessList, allHeightsList, allSizesList } from "@/lib/products";
 import { CategorySlug, Firmness, SpringType } from "@/lib/types";
+import { brands, BrandId } from "@/lib/brands";
 
 export interface FilterState {
   category: CategorySlug | "all";
+  brand: BrandId | "all";
   springType: SpringType | "all";
   firmness: Firmness | "all";
   heightId: string | "all";
@@ -15,6 +17,7 @@ export interface FilterState {
 
 export const defaultFilters: FilterState = {
   category: "all",
+  brand: "all",
   springType: "all",
   firmness: "all",
   heightId: "all",
@@ -43,6 +46,20 @@ export default function ShopFilters({
           {categories.map((c) => (
             <FilterChip key={c.slug} active={filters.category === c.slug} onClick={() => update({ category: c.slug })}>
               {c.name}
+            </FilterChip>
+          ))}
+        </div>
+      </div>
+
+      <div>
+        <p className="mb-2 text-sm font-extrabold text-navy">الماركة</p>
+        <div className="flex flex-wrap gap-2">
+          <FilterChip active={filters.brand === "all"} onClick={() => update({ brand: "all" })}>
+            كل الماركات
+          </FilterChip>
+          {brands.map((b) => (
+            <FilterChip key={b.id} active={filters.brand === b.id} onClick={() => update({ brand: b.id })}>
+              {b.name}
             </FilterChip>
           ))}
         </div>

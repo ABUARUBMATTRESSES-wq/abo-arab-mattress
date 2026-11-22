@@ -4,7 +4,8 @@ import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { Star, MessageCircle, ShoppingCart, ShieldCheck, Truck, Check } from "lucide-react";
 import { Product } from "@/lib/types";
-import { getVariant, formatPrice, computeDiscountPercent } from "@/lib/products";
+import { getVariant, formatPrice, computeDiscountPercent, products } from "@/lib/products";
+import { findCheaperAlternatives } from "@/lib/brands";
 import { buildWhatsappLink, siteConfig } from "@/lib/config";
 import { useCart } from "@/context/CartContext";
 import { trackEvent } from "@/lib/pixel";
@@ -27,6 +28,10 @@ export default function ProductDetailClient({ product }: { product: Product }) {
 
   const selectedSize = product.sizes.find((s) => s.id === sizeId);
   const selectedHeight = product.heights.find((h) => h.id === heightId);
+  const cheaperAlternatives = useMemo(
+    () => findCheaperAlternatives(product, products, sizeId, heightId),
+    [product, sizeId, heightId]
+  );
 
   useEffect(() => {
     trackEvent("ViewContent", {
@@ -249,6 +254,53 @@ export default function ProductDetailClient({ product }: { product: Product }) {
                       ))}
                     </ul>
                     <span className="badge-gold mt-2 inline-flex">وفر {bundle.extraDiscountPercent}% إضافية</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {/* بدائل مشابهة بسعر أقل */}
+        {cheaperAlternatives.length > 0 && (
+          <section className="mt-16">
+            <h2 className="section-title mb-2">بدائل مشابهة بسعر أقل</h2>
+            <p className="mb-6 text-sm text-navy/60">
+              بدائل متوفرة بنفس المقاس والارتفاع بسعر أقل، مع توضيح الاختلافات بينها وبين هذا المنتج.
+            </p>
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {cheaperAlternatives.map((alt) => (
+                <div key={alt.product.id} className="card flex flex-col overflow-hidden">
+                  <Link href={`/product/${alt.product.slug}`} className="relative block aspect-[4/3] overflow-hidden bg-navy/5">
+                    <img
+                      src={alt.product.images[0]}
+                      alt={alt.product.name}
+                      className="h-full w-full object-cover"
+                      loading="lazy"
+                    />
+                  </Link>
+                  <div className="flex flex-1 flex-col gap-2 p-4">
+                    <Link href={`/product/${alt.product.slug}`} className="font-extrabold text-navy hover:text-gold-dark">
+                      {alt.product.name}
+                    </Link>
+                    <p className="text-xs text-navy/60">
+                      متوفر بنفس الاختيار: {alt.sizeLabel} / {alt.heightLabel}
+                    </p>
+                    <p className="text-sm">
+                      <span className="font-extrabold text-navy">{formatPrice(alt.variant.price)} ج.م</span>{" "}
+                      <span className="text-navy/50 line-through">{formatPrice(alt.currentPrice)} ج.م</span>{" "}
+                      <span className="badge-gold">وفّر {formatPrice(alt.currentPrice - alt.variant.price)} ج.م</span>
+                    </p>
+                    {alt.differences.length > 0 && (
+                      <div className="rounded-xl bg-paper p-3">
+                        <p className="mb-1 text-xs font-extrabold text-navy">الاختلافات عن هذا المنتج:</p>
+                        <ul className="space-y-1 text-xs leading-5 text-navy/70">
+                          {alt.differences.map((d) => (
+                            <li key={d}>• {d}</li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
                   </div>
                 </div>
               ))}
