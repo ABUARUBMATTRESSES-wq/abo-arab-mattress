@@ -151,3 +151,28 @@ export function findCheaperAlternatives(
 
   return results.sort((a, b) => a.variant.price - b.variant.price).slice(0, max);
 }
+
+// تصنيف المرتبة حسب التصنيع: يُشتق فقط من نوع السوست الموثق في الكتالوج وما يذكره اسم المنتج صراحة (ميموري فوم / طبي).
+// المنتجات غير الموثقة التصنيع لا تُصنَّف (null) بدلاً من التخمين.
+export type ConstructionClass = "connected" | "pocket" | "medical-no-springs" | "pocket-memory-foam";
+
+export const constructionClassLabels: Record<ConstructionClass, string> = {
+  connected: "سوست متصلة",
+  pocket: "سوست منفصلة",
+  "medical-no-springs": "طبي بدون سوست",
+  "pocket-memory-foam": "سوست منفصلة بطبقة ميموري فوم",
+};
+
+export function getConstructionClass(p: Product): ConstructionClass | null {
+  if (p.category !== "mattresses") return null;
+  const memoryFoam = p.name.includes("ميموري") || p.shortDescription.includes("ميموري");
+  const medical = p.name.includes("طبي");
+  const s = p.springType;
+  if (s === "سوست متصلة" || s === "مراتب متصلة (أمريكي)" || s === "مراتب متصلة ألماني") return "connected";
+  if (s === "سوست منفصلة" || s === "مراتب منفصلة(بوكيت)") return memoryFoam ? "pocket-memory-foam" : "pocket";
+  if ((s === "مراتب بدون سوست" || s === "فوم" || s === "مراتب رول") && medical) return "medical-no-springs";
+  return null;
+}
+
+export const constructionClassesList: ConstructionClass[] = ["connected", "pocket", "medical-no-springs", "pocket-memory-foam"];
+
