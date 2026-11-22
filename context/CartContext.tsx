@@ -20,22 +20,13 @@ interface CartContextValue {
   originalSubtotal: number;
   totalSavings: number;
   itemsCount: number;
-  discountCode: string | null;
-  discountPercent: number;
-  applyDiscountCode: (code: string) => boolean;
-  removeDiscountCode: () => void;
 }
 
 const CartContext = createContext<CartContextValue | undefined>(undefined);
 
-const STORAGE_KEY = "abo_arab_cart";
+// The previous key may contain demo products with obsolete prices.
+const STORAGE_KEY = "abo_arab_cart_core_20261122";
 const DISCOUNT_STORAGE_KEY = "abo_arab_discount";
-
-// أكواد خصم تجريبية — عدّلها حسب حملاتك
-const VALID_DISCOUNT_CODES: Record<string, number> = {
-  ABOARAB10: 10,
-  ROYAL15: 15,
-};
 
 function itemKey(productId: string, sizeLabel: string, heightLabel: string) {
   return `${productId}__${sizeLabel}__${heightLabel}`;
@@ -43,15 +34,13 @@ function itemKey(productId: string, sizeLabel: string, heightLabel: string) {
 
 export function CartProvider({ children }: { children: React.ReactNode }) {
   const [items, setItems] = useState<CartItem[]>([]);
-  const [discountCode, setDiscountCode] = useState<string | null>(null);
   const [hydrated, setHydrated] = useState(false);
 
   useEffect(() => {
     try {
       const raw = window.localStorage.getItem(STORAGE_KEY);
       if (raw) setItems(JSON.parse(raw));
-      const code = window.localStorage.getItem(DISCOUNT_STORAGE_KEY);
-      if (code) setDiscountCode(code);
+      window.localStorage.removeItem(DISCOUNT_STORAGE_KEY);
     } catch {
       // ignore
     } finally {
@@ -109,41 +98,13 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     setItems([]);
   }, []);
 
-  const applyDiscountCode = useCallback((code: string) => {
-    const normalized = code.trim().toUpperCase();
-    if (VALID_DISCOUNT_CODES[normalized]) {
-      setDiscountCode(normalized);
-      try {
-        window.localStorage.setItem(DISCOUNT_STORAGE_KEY, normalized);
-      } catch {
-        // ignore
-      }
-      return true;
-    }
-    return false;
-  }, []);
-
-  const removeDiscountCode = useCallback(() => {
-    setDiscountCode(null);
-    try {
-      window.localStorage.removeItem(DISCOUNT_STORAGE_KEY);
-    } catch {
-      // ignore
-    }
-  }, []);
-
-  const subtotalBeforeCode = useMemo(
+  const subtotal = useMemo(
     () => items.reduce((sum, i) => sum + i.unitPrice * i.quantity, 0),
     [items]
   );
   const originalSubtotal = useMemo(
     () => items.reduce((sum, i) => sum + i.originalUnitPrice * i.quantity, 0),
     [items]
-  );
-  const discountPercent = discountCode ? VALID_DISCOUNT_CODES[discountCode] ?? 0 : 0;
-  const subtotal = useMemo(
-    () => Math.round(subtotalBeforeCode * (1 - discountPercent / 100)),
-    [subtotalBeforeCode, discountPercent]
   );
   const totalSavings = originalSubtotal - subtotal;
   const itemsCount = items.reduce((sum, i) => sum + i.quantity, 0);
@@ -158,10 +119,6 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     originalSubtotal,
     totalSavings,
     itemsCount,
-    discountCode,
-    discountPercent,
-    applyDiscountCode,
-    removeDiscountCode,
   };
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
