@@ -11,12 +11,11 @@ export default function CompareTable({ items }: { items: Product[] }) {
       const v = p.variantPrices[0];
       return v ? <PriceTag price={v.price} originalPrice={v.originalPrice} size="sm" /> : "—";
     }},
-    { label: "نوع السوست", render: (p) => p.springType },
-    { label: "درجة الصلابة", render: (p) => p.firmness },
-    { label: "الضمان", render: (p) => `${p.warrantyYears} سنوات` },
+    { label: "نوع السوست", render: (p) => p.springType ?? "—" },
+    { label: "درجة الصلابة", render: (p) => p.firmness ?? "—" },
+    { label: "الضمان", render: (p) => (p.warrantyYears > 0 ? `${p.warrantyYears} سنوات` : "—") },
     { label: "المقاسات المتاحة", render: (p) => p.sizes.map((s) => s.label).join(" / ") },
     { label: "الارتفاعات المتاحة", render: (p) => p.heights.map((h) => h.label).join(" / ") },
-    { label: "التقييم", render: (p) => `${p.rating} ⭐ (${p.reviewsCount})` },
   ];
 
   return (

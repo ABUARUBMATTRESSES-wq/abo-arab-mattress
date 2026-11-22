@@ -2,6 +2,7 @@ import { Star, Quote } from "lucide-react";
 import { testimonials } from "@/lib/products";
 
 export default function Testimonials() {
+  if (testimonials.length === 0) return null;
   return (
     <section className="container-app py-16">
       <div className="mb-8 text-center">

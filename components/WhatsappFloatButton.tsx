@@ -1,9 +1,14 @@
 "use client";
 
+import { usePathname } from "next/navigation";
 import { MessageCircle } from "lucide-react";
 import { buildWhatsappLink } from "@/lib/config";
 
 export default function WhatsappFloatButton({ message }: { message?: string }) {
+  const pathname = usePathname();
+  // Contact already has prominent WhatsApp links. Avoid covering its address.
+  if (pathname === "/contact") return null;
+
   const link = buildWhatsappLink(message ?? "السلام عليكم، حابب أستفسر عن المراتب والمفروشات عندكم 🙏");
 
   return (

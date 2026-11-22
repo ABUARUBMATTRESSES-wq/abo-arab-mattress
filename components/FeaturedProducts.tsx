@@ -11,8 +11,8 @@ export default function FeaturedProducts() {
       <div className="container-app">
         <div className="mb-8 flex items-end justify-between">
           <div>
-            <h2 className="section-title">منتجات مميزة وعروض</h2>
-            <p className="mt-2 text-navy/60">أكتر المنتجات مبيعاً وتقييماً عند عملائنا</p>
+            <h2 className="section-title">منتجات مختارة</h2>
+            <p className="mt-2 text-navy/60">تصفح مجموعة من المراتب والمخدات وواقي المرتبة وطبقات التطرية</p>
           </div>
           <Link href="/shop" className="hidden items-center gap-1 font-bold text-navy hover:text-gold-dark sm:flex">
             كل المنتجات <ArrowLeft size={18} />

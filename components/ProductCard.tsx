@@ -59,11 +59,13 @@ export default function ProductCard({
         </Link>
         <p className="line-clamp-2 text-sm text-navy/60">{product.shortDescription}</p>
 
-        <div className="mt-1 flex items-center gap-1 text-xs text-navy/60">
-          <Star size={14} className="fill-gold text-gold" />
-          <span className="font-bold text-navy">{product.rating}</span>
-          <span>({product.reviewsCount} تقييم)</span>
-        </div>
+        {product.reviewsCount > 0 && (
+          <div className="mt-1 flex items-center gap-1 text-xs text-navy/60">
+            <Star size={14} className="fill-gold text-gold" />
+            <span className="font-bold text-navy">{product.rating}</span>
+            <span>({product.reviewsCount} تقييم)</span>
+          </div>
+        )}
 
         {defaultVariant && (
           <div className="mt-auto pt-3">

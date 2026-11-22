@@ -21,7 +21,7 @@ export default function ProductDetailClient({ product }: { product: Product }) {
   const { addItem } = useCart();
 
   const variant = useMemo(
-    () => getVariant(product, sizeId, heightId) ?? product.variantPrices[0],
+    () => getVariant(product, sizeId, heightId),
     [product, sizeId, heightId]
   );
 
@@ -45,6 +45,7 @@ export default function ProductDetailClient({ product }: { product: Product }) {
   const handleAddToCart = () => {
     addItem({
       productId: product.id,
+      category: product.category,
       productName: product.name,
       slug: product.slug,
       image: product.images[0],
@@ -105,10 +106,12 @@ export default function ProductDetailClient({ product }: { product: Product }) {
           <div>
             <div className="mb-2 flex items-center gap-2">
               {product.isNew && <span className="badge-navy">جديد</span>}
-              <span className="flex items-center gap-1 text-sm text-navy/60">
-                <Star size={16} className="fill-gold text-gold" />
-                <span className="font-bold text-navy">{product.rating}</span> ({product.reviewsCount} تقييم)
-              </span>
+              {product.reviewsCount > 0 && (
+                <span className="flex items-center gap-1 text-sm text-navy/60">
+                  <Star size={16} className="fill-gold text-gold" />
+                  <span className="font-bold text-navy">{product.rating}</span> ({product.reviewsCount} تقييم)
+                </span>
+              )}
             </div>
             <h1 className="text-2xl font-extrabold text-navy sm:text-3xl">{product.name}</h1>
             <p className="mt-2 text-navy/60">{product.shortDescription}</p>
@@ -122,15 +125,19 @@ export default function ProductDetailClient({ product }: { product: Product }) {
               </p>
             )}
 
-            {/* المقاس */}
+            {/* المقاس / الاختيار */}
+            {product.sizes.length > 1 && (
             <div className="mb-5">
-              <p className="mb-2 text-sm font-extrabold text-navy">المقاس (سم)</p>
+              <p className="mb-2 text-sm font-extrabold text-navy">
+                {product.category === "mattresses" || product.category === "toppers" ? "المقاس (سم)" : "الاختيار"}
+              </p>
               <div className="flex flex-wrap gap-2">
                 {product.sizes.map((s) => (
                   <button
                     key={s.id}
+                    disabled={!getVariant(product, s.id, heightId)}
                     onClick={() => setSizeId(s.id)}
-                    className={`rounded-xl border px-4 py-2 text-sm font-bold transition ${
+                    className={`rounded-xl border px-4 py-2 text-sm font-bold transition disabled:cursor-not-allowed disabled:opacity-30 ${
                       sizeId === s.id ? "border-gold bg-gold-gradient text-navy shadow-gold" : "border-navy/15 text-navy/70"
                     }`}
                   >
@@ -139,15 +146,23 @@ export default function ProductDetailClient({ product }: { product: Product }) {
                 ))}
               </div>
             </div>
+            )}
 
             {/* الارتفاع */}
+            {product.heights.length > 1 && (
             <div className="mb-6">
               <p className="mb-2 text-sm font-extrabold text-navy">الارتفاع</p>
               <div className="flex flex-wrap gap-2">
                 {product.heights.map((h) => (
                   <button
                     key={h.id}
-                    onClick={() => setHeightId(h.id)}
+                    onClick={() => {
+                      setHeightId(h.id);
+                      if (!getVariant(product, sizeId, h.id)) {
+                        const available = product.variantPrices.find((v) => v.heightId === h.id);
+                        if (available) setSizeId(available.sizeId);
+                      }
+                    }}
                     className={`rounded-xl border px-4 py-2 text-sm font-bold transition ${
                       heightId === h.id ? "border-gold bg-gold-gradient text-navy shadow-gold" : "border-navy/15 text-navy/70"
                     }`}
@@ -157,6 +172,8 @@ export default function ProductDetailClient({ product }: { product: Product }) {
                 ))}
               </div>
             </div>
+
+            )}
 
             {/* الكمية */}
             <div className="mb-6 flex items-center gap-3">
@@ -200,9 +217,11 @@ export default function ProductDetailClient({ product }: { product: Product }) {
             )}
 
             <div className="mt-6 grid grid-cols-2 gap-3 text-xs font-bold text-navy/70">
-              <div className="flex items-center gap-2 rounded-xl bg-navy/5 p-3">
-                <ShieldCheck size={18} className="text-gold-dark" /> ضمان {product.warrantyYears} سنوات
-              </div>
+              {product.warrantyYears > 0 && (
+                <div className="flex items-center gap-2 rounded-xl bg-navy/5 p-3">
+                  <ShieldCheck size={18} className="text-gold-dark" /> ضمان {product.warrantyYears} سنوات
+                </div>
+              )}
               <div className="flex items-center gap-2 rounded-xl bg-navy/5 p-3">
                 <Truck size={18} className="text-gold-dark" /> توصيل لكل المحافظات
               </div>
@@ -254,8 +273,22 @@ export default function ProductDetailClient({ product }: { product: Product }) {
         </section>
 
         <section className="mt-16">
-          <h2 className="section-title mb-6">الوصف الكامل</h2>
-          <p className="max-w-3xl leading-8 text-navy/70">{product.description}</p>
+          <h2 className="section-title mb-6">عن المنتج</h2>
+          {product.readableDescription ? (
+            <div className="card max-w-3xl p-6 sm:p-8">
+              <p className="mb-5 leading-8 text-navy/80">{product.readableDescription.intro}</p>
+              <ul className="space-y-3 text-navy/80">
+                {product.readableDescription.points.map((point) => (
+                  <li key={point} className="flex items-start gap-3 leading-7">
+                    <Check size={18} className="mt-1 shrink-0 text-gold-dark" />
+                    <span>{point}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ) : (
+            <p className="max-w-3xl leading-8 text-navy/70">{product.description}</p>
+          )}
         </section>
 
         <div className="mt-10">
