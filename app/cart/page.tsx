@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
-import { Trash2, Minus, Plus, Tag, Truck, ShoppingBag, MessageCircle } from "lucide-react";
+import { Trash2, Minus, Plus, Truck, ShoppingBag, MessageCircle } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { useCart } from "@/context/CartContext";
@@ -11,6 +11,7 @@ import { formatPrice } from "@/lib/products";
 import { trackEvent } from "@/lib/pixel";
 import { saveLead } from "@/lib/leads";
 import { CustomerInfo } from "@/lib/types";
+import { calculateShipping, isCairoOrGiza } from "@/lib/shipping";
 
 export default function CartPage() {
   const {
@@ -20,15 +21,9 @@ export default function CartPage() {
     subtotal,
     originalSubtotal,
     totalSavings,
-    discountCode,
-    discountPercent,
-    applyDiscountCode,
-    removeDiscountCode,
     clearCart,
   } = useCart();
 
-  const [codeInput, setCodeInput] = useState("");
-  const [codeError, setCodeError] = useState("");
   const [customer, setCustomer] = useState<CustomerInfo>({
     name: "",
     phone: "",
@@ -38,7 +33,8 @@ export default function CartPage() {
   });
   const [submitted, setSubmitted] = useState(false);
 
-  const shippingFee = items.length === 0 ? 0 : (customer.governorate === governorates[0] || customer.governorate === governorates[1] ? (subtotal >= siteConfig.freeShippingThreshold ? 0 : siteConfig.shippingFee) : ((items.filter(i => i.category === "mattresses").reduce((acc, i) => acc + i.quantity, 0) || items.reduce((acc, i) => acc + i.quantity, 0)) * 300));
+  const shippingFee = calculateShipping(items, subtotal, customer.governorate);
+  const regionalFreeShipping = isCairoOrGiza(customer.governorate);
   const total = subtotal + shippingFee;
   const remainingForFreeShipping = Math.max(0, siteConfig.freeShippingThreshold - subtotal);
   const progressPercent = Math.min(100, (subtotal / siteConfig.freeShippingThreshold) * 100);
@@ -47,15 +43,6 @@ export default function CartPage() {
     () => items.length > 0 && customer.name.trim() && customer.phone.trim() && customer.address.trim(),
     [items, customer]
   );
-
-  const handleApplyCode = () => {
-    const ok = applyDiscountCode(codeInput);
-    if (!ok) {
-      setCodeError("الكود غير صحيح أو منتهي الصلاحية");
-    } else {
-      setCodeError("");
-    }
-  };
 
   const handleCheckout = () => {
     if (!canSubmit) return;
@@ -70,7 +57,6 @@ export default function CartPage() {
       subtotal,
       shippingFee,
       total,
-      discountCode: discountCode ?? undefined,
     });
 
     trackEvent("Purchase", {
@@ -89,9 +75,7 @@ export default function CartPage() {
       )
       .join("\n");
 
-    const message = `🛒 طلب جديد رقم ${orderId}\n\n${itemsText}\n\n${
-      discountCode ? `كود الخصم: ${discountCode} (${discountPercent}%)\n` : ""
-    }الإجمالي الفرعي: ${formatPrice(subtotal)} ${siteConfig.currency}\nالشحن: ${
+    const message = `🛒 طلب جديد رقم ${orderId}\n\n${itemsText}\n\nالإجمالي الفرعي: ${formatPrice(subtotal)} ${siteConfig.currency}\nالشحن: ${
       shippingFee === 0 ? "مجاني" : `${formatPrice(shippingFee)} ${siteConfig.currency}`
     }\nالإجمالي الكلي: ${formatPrice(total)} ${siteConfig.currency}\n\n👤 بيانات العميل:\nالاسم: ${customer.name}\nالهاتف: ${
       customer.phone
@@ -148,20 +132,22 @@ export default function CartPage() {
               <div className="card mb-6 p-5">
                 <div className="mb-2 flex items-center gap-2 text-sm font-bold text-navy">
                   <Truck size={18} className="text-gold-dark" />
-                  {remainingForFreeShipping > 0 ? (
+                  {!regionalFreeShipping ? (
+                    <span>الشحن لباقي المحافظات: ٣٠٠ ج.م لكل مرتبة، أو ٣٠٠ ج.م للطلب كاملًا إذا كان إكسسوارات ومخدات فقط.</span>
+                  ) : remainingForFreeShipping > 0 ? (
                     <span>
-                      أضف {formatPrice(remainingForFreeShipping)} {siteConfig.currency} أخرى واحصل على شحن مجاني!
+                      أضف {formatPrice(remainingForFreeShipping)} {siteConfig.currency} أخرى واحصل على شحن مجاني داخل القاهرة والجيزة!
                     </span>
                   ) : (
-                    <span>🎉 مبروك! حصلت على شحن مجاني</span>
+                    <span>حصلت على شحن مجاني داخل القاهرة والجيزة</span>
                   )}
                 </div>
-                <div className="h-2.5 overflow-hidden rounded-full bg-navy/10">
+                {regionalFreeShipping && <div className="h-2.5 overflow-hidden rounded-full bg-navy/10">
                   <div
                     className="h-full rounded-full bg-gold-gradient transition-all"
                     style={{ width: `${progressPercent}%` }}
                   />
-                </div>
+                </div>}
               </div>
 
               <div className="space-y-4">
@@ -226,33 +212,6 @@ export default function CartPage() {
 
             {/* ملخص الطلب */}
             <div className="h-fit space-y-5">
-              <div className="card p-5">
-                <h2 className="mb-4 font-extrabold text-navy">كود الخصم</h2>
-                {discountCode ? (
-                  <div className="flex items-center justify-between rounded-xl bg-emerald-50 p-3 text-sm">
-                    <span className="font-bold text-emerald-700">تم تطبيق كود {discountCode} ({discountPercent}%)</span>
-                    <button onClick={removeDiscountCode} className="text-xs font-bold text-red-500">
-                      إزالة
-                    </button>
-                  </div>
-                ) : (
-                  <div>
-                    <div className="flex gap-2">
-                      <input
-                        value={codeInput}
-                        onChange={(e) => setCodeInput(e.target.value)}
-                        placeholder="أدخل كود الخصم"
-                        className="w-full rounded-xl border border-navy/15 px-3 py-2 text-sm outline-none focus:border-gold"
-                      />
-                      <button onClick={handleApplyCode} className="btn-outline !px-4 !py-2 text-sm">
-                        <Tag size={16} />
-                      </button>
-                    </div>
-                    {codeError && <p className="mt-2 text-xs font-bold text-red-500">{codeError}</p>}
-                  </div>
-                )}
-              </div>
-
               <div className="card space-y-2 p-5 text-sm">
                 <div className="flex justify-between text-navy/70">
                   <span>الإجمالي الفرعي</span>
