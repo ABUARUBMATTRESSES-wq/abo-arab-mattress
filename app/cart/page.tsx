@@ -35,7 +35,6 @@ export default function CartPage() {
     subtotal,
     originalSubtotal,
     totalSavings,
-    clearCart,
   } = useCart();
 
   const [customer, setCustomer] = useState<CustomerInfo>({
@@ -100,9 +99,10 @@ export default function CartPage() {
       customer.notes ? `\nملاحظات: ${customer.notes}` : ""
     }`;
 
+    // Cart is intentionally kept: the order only reaches us if the customer
+    // presses send in WhatsApp, so the cart must survive an abandoned compose.
     window.open(buildWhatsappLink(message), "_blank");
     setSubmitted(true);
-    clearCart();
   };
 
   if (submitted) {
@@ -114,13 +114,24 @@ export default function CartPage() {
             <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-full bg-gold-gradient text-navy">
               <ShoppingBag size={28} />
             </div>
-            <h1 className="section-title mb-3">تم إرسال طلبك بنجاح!</h1>
+            <h1 className="section-title mb-3">طلبك جاهز في واتساب</h1>
             <p className="mb-6 text-navy/60">
-              تم تجهيز تفاصيل طلبك وفتح واتساب لإرسالها لفريقنا. هنتواصل معاك للتأكيد خلال وقت قصير.
+              فتحنا واتساب برسالة فيها تفاصيل طلبك. اضغط إرسال هناك عشان الطلب
+              يوصلنا فعلًا. لو قفلت واتساب من غير إرسال، الطلب مش هيوصلنا —
+              وسلة مشترياتك محفوظة زي ما هي وتقدر ترجعلها.
             </p>
-            <Link href="/shop" className="btn-primary w-full">
-              متابعة التسوق
-            </Link>
+            <div className="flex flex-col gap-3">
+              <Link href="/shop" className="btn-primary w-full">
+                متابعة التسوق
+              </Link>
+              <button
+                type="button"
+                onClick={() => setSubmitted(false)}
+                className="btn-outline w-full"
+              >
+                الرجوع إلى السلة
+              </button>
+            </div>
           </div>
         </main>
         <Footer />

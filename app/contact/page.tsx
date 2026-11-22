@@ -26,7 +26,7 @@ export default function ContactPage() {
             <span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-[#25D366]/10 text-[#25D366]">
               <MessageCircle size={26} />
             </span>
-            <p className="font-extrabold text-navy">واتساب الشغل</p>
+            <p className="font-extrabold text-navy">تواصل معنا عبر واتساب</p>
             <p className="text-sm text-navy/60">للاستفسارات والطلبات</p>
           </a>
 
