@@ -8,7 +8,7 @@ export default function FaqSection() {
   const [openIndex, setOpenIndex] = useState<number | null>(0);
 
   return (
-    <section className="bg-paper py-16">
+    <section id="faq" className="bg-paper py-16">
       <div className="container-app max-w-3xl">
         <div className="mb-8 text-center">
           <h2 className="section-title">الأسئلة الشائعة</h2>

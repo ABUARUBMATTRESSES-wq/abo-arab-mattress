@@ -72,12 +72,44 @@ export const allSizesList = Array.from(
 );
 
 // لا توجد تقييمات معروضة حالياً — لا نعرض آراء غير حقيقية
+// وصف مختصر تلقائي للمنتجات اللي وصفها كان مجرد اسمها — من حقائق الكتالوج نفسه (ماركة/نوع/ضمان) بدون أي مواصفات جديدة
+const categoryLabel: Record<string, string> = { mattresses: "مرتبة", pillows: "مخدة", protectors: "واقي مرتبة", toppers: "طبقة تطرية (توب)" };
+products.forEach((p) => {
+  if (p.shortDescription.trim() !== p.name.trim()) return;
+  const brand = p.specs.find((s) => s.label === "الماركة")?.value;
+  const brandPart = brand ? ` ${brand}` : "";
+  const springPart = p.category === "mattresses" && p.springType ? ` ب${p.springType}` : "";
+  const warrantyPart = p.category === "mattresses" ? "، وضمان ١٠ سنين" : "";
+  const feminine = p.category !== "protectors";
+  p.shortDescription = `${categoryLabel[p.category] ?? "منتج"}${brandPart}${springPart}، ${feminine ? "متوفرة" : "متوفر"} بعدة مقاسات واختيارات${warrantyPart}.`;
+});
+
 export const testimonials: { name: string; location: string; rating: number; comment: string }[] = [];
 
 export const faqs = [
   {
     question: "إزاي أختار المقاس؟",
     answer: "افتح صفحة المنتج واختار من المقاسات والارتفاعات المتاحة. السعر بيتغير حسب الاختيار.",
+  },
+  {
+    question: "بتوصّلوا لمحافظتي؟",
+    answer: "بنوصّل لكل محافظات مصر السبعة وعشرين.",
+  },
+  {
+    question: "الشحن بكام؟",
+    answer: "القاهرة والجيزة ٥٠٠ جنيه، ومجاني للطلبات من ٢٠,٠٠٠ جنيه أو أكتر. باقي المحافظات ٣٠٠ جنيه لكل مرتبة، و٣٠٠ جنيه للطلب اللي كله إكسسوارات.",
+  },
+  {
+    question: "فيه ضمان؟",
+    answer: "كل المراتب عليها ضمان ١٠ سنين.",
+  },
+  {
+    question: "إزاي أطلب؟",
+    answer: "اختار المنتج والمقاس وضيفه للسلة وكمّل الطلب — هيتفتح واتساب بتفاصيل طلبك جاهزة، وأكّد من هناك.",
+  },
+  {
+    question: "أقدر أقارن بين الموديلات؟",
+    answer: "أيوه، من صفحة المتجر فعّل وضع المقارنة واختار لحد ٣ موديلات جنب بعض.",
   },
   {
     question: "عايز أعرف تفاصيل أكتر عن منتج؟",

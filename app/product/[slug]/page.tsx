@@ -12,6 +12,11 @@ export function generateMetadata({ params }: { params: { slug: string } }) {
   return {
     title: `${product.name} | مراتب و مفروشات أبو عرب`,
     description: product.shortDescription,
+    openGraph: {
+      title: product.name,
+      description: product.shortDescription,
+      images: product.images[0] ? [{ url: product.images[0], alt: product.name }] : undefined,
+    },
   };
 }
 

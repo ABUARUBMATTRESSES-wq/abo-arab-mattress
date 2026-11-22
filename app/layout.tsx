@@ -7,10 +7,29 @@ import { siteConfig } from "@/lib/config";
 
 // ملاحظة: بنحمّل خط Cairo عن طريق رابط Google Fonts مباشرة بدل next/font
 // عشان نضمن نجاح البناء (build) حتى في بيئات بدون اتصال وقت الـ build.
+const SITE_URL = "https://abo-arab-mattress.pages.dev";
+const SITE_DESCRIPTION = "تصفح المراتب والمخدات والخداديات وواقي المرتبة وطبقات التطرية من أبو عرب.";
+
 export const metadata: Metadata = {
+  metadataBase: new URL(SITE_URL),
   title: `${siteConfig.brandNameAr} | Abo Arab Mattress`,
-  description: "تصفح المراتب والمخدات والخداديات وواقي المرتبة وطبقات التطرية من أبو عرب.",
+  description: SITE_DESCRIPTION,
   keywords: ["مراتب", "مفروشات", "مخدات", "واقي مرتبة", "أبو عرب", "مراتب طبية"],
+  openGraph: {
+    type: "website",
+    locale: "ar_EG",
+    url: SITE_URL,
+    siteName: siteConfig.brandNameAr,
+    title: `${siteConfig.brandNameAr} | Abo Arab Mattress`,
+    description: SITE_DESCRIPTION,
+    images: [{ url: "/og-image.png", width: 1200, height: 630, alt: siteConfig.brandNameAr }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: `${siteConfig.brandNameAr} | Abo Arab Mattress`,
+    description: SITE_DESCRIPTION,
+    images: ["/og-image.png"],
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

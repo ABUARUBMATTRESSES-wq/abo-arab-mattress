@@ -53,7 +53,13 @@ export default function ShopPageClient() {
         (filters.heightId === "all" || v.heightId === filters.heightId) &&
         (filters.sizeId === "all" || v.sizeId === filters.sizeId)
       )) return false;
-      if (searchTerm && !p.name.includes(searchTerm) && !p.shortDescription.includes(searchTerm)) return false;
+      if (searchTerm.trim()) {
+        const normalizeArabic = (s: string) =>
+          s.replace(/[\u0623\u0625\u0622\u0627]/g, "\u0627").replace(/\u0629/g, "\u0647").replace(/\u0649/g, "\u064A").replace(/[\u064B-\u0652\u0670]/g, "").toLowerCase();
+        const term = normalizeArabic(searchTerm.trim());
+        const haystack = normalizeArabic([p.name, p.shortDescription, p.springType, ...p.specs.map((s) => s.value)].join(" "));
+        if (!haystack.includes(term)) return false;
+      }
       return true;
     });
   }, [filters, searchTerm]);

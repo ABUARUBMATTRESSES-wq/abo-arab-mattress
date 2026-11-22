@@ -35,7 +35,7 @@ export default function Footer() {
             <li><Link href="/contact" className="hover:text-white">تواصل معنا</Link></li>
             <li><Link href="/cart" className="hover:text-white">سلة المشتريات</Link></li>
             <li><Link href="/contact" className="hover:text-white">استفسارات الضمان والاستبدال</Link></li>
-            <li>الأسئلة الشائعة</li>
+            <li><Link href="/#faq" className="hover:text-white">الأسئلة الشائعة</Link></li>
           </ul>
         </div>
 
