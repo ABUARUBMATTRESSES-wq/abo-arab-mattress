@@ -38,8 +38,10 @@ export default function ShopPageClient() {
       if (filters.category !== "all" && p.category !== filters.category) return false;
       if (filters.springType !== "all" && p.springType !== filters.springType) return false;
       if (filters.firmness !== "all" && p.firmness !== filters.firmness) return false;
-      if (filters.heightId !== "all" && !p.heights.some((h) => h.id === filters.heightId)) return false;
-      if (filters.sizeId !== "all" && !p.sizes.some((s) => s.id === filters.sizeId)) return false;
+      if (!p.variantPrices.some((v) =>
+        (filters.heightId === "all" || v.heightId === filters.heightId) &&
+        (filters.sizeId === "all" || v.sizeId === filters.sizeId)
+      )) return false;
       if (searchTerm && !p.name.includes(searchTerm) && !p.shortDescription.includes(searchTerm)) return false;
       return true;
     });
