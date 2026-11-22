@@ -1,10 +1,10 @@
 import { ShieldCheck, Truck, Wallet, RefreshCw } from "lucide-react";
 
 const features = [
-  { icon: ShieldCheck, title: "ضمان حقيقي", desc: "حتى 12 سنة ضمان صناعة" },
-  { icon: Truck, title: "توصيل سريع", desc: "لجميع محافظات مصر" },
-  { icon: Wallet, title: "الدفع عند الاستلام", desc: "ادفع بعد ما تستلم وتتأكد" },
-  { icon: RefreshCw, title: "استبدال مرن", desc: "خلال 14 يوم من الاستلام" },
+  { icon: ShieldCheck, title: "مراتب", desc: "موديلات ومقاسات متنوعة" },
+  { icon: Truck, title: "مخدات وخداديات", desc: "تصفح الاختيارات المتاحة" },
+  { icon: Wallet, title: "واقي مرتبة", desc: "تصفح الأنواع والمقاسات" },
+  { icon: RefreshCw, title: "طبقات تطرية", desc: "تصفح الموديلات المتاحة" },
 ];
 
 export default function FeaturesBar() {
