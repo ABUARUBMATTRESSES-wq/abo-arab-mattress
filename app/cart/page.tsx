@@ -13,6 +13,20 @@ import { saveLead } from "@/lib/leads";
 import { CustomerInfo } from "@/lib/types";
 import { calculateShipping, isCairoOrGiza } from "@/lib/shipping";
 
+function normalizePhone(value: string): string {
+  return value.replace(/[٠-٩]/g, d => String(d.charCodeAt(0) - 0x660))
+    .replace(/[۰-۹]/g, d => String(d.charCodeAt(0) - 0x6f0))
+    .replace(/[\s().-]/g, "").replace(/^00/, "+");
+}
+
+function isValidPhone(value: string): boolean {
+  const phone = normalizePhone(value);
+  if (phone.startsWith("+20")) return /^\+20(?:1[0125]\d{8}|[2-9]\d{7,8})$/.test(phone);
+  if (phone.startsWith("+")) return /^\+[1-9]\d{7,14}$/.test(phone);
+  if (phone.startsWith("01")) return /^01[0125]\d{8}$/.test(phone);
+  return /^0[2-9]\d{7,8}$/.test(phone);
+}
+
 export default function CartPage() {
   const {
     items,
@@ -39,8 +53,11 @@ export default function CartPage() {
   const remainingForFreeShipping = Math.max(0, siteConfig.freeShippingThreshold - subtotal);
   const progressPercent = Math.min(100, (subtotal / siteConfig.freeShippingThreshold) * 100);
 
+  const phoneIsValid = isValidPhone(customer.phone);
+  const showPhoneError = customer.phone.trim().length > 0 && !phoneIsValid;
+
   const canSubmit = useMemo(
-    () => items.length > 0 && customer.name.trim() && customer.phone.trim() && customer.address.trim(),
+    () => Boolean(items.length > 0 && customer.name.trim() && isValidPhone(customer.phone) && customer.address.trim()),
     [items, customer]
   );
 
@@ -245,9 +262,18 @@ export default function CartPage() {
                   value={customer.phone}
                   onChange={(e) => setCustomer((c) => ({ ...c, phone: e.target.value }))}
                   placeholder="رقم الهاتف"
+                  aria-label="رقم الهاتف"
+                  aria-invalid={showPhoneError}
+                  aria-describedby="phone-help"
+                  autoComplete="tel"
+                  inputMode="tel"
+                  dir="ltr"
                   type="tel"
                   className="w-full rounded-xl border border-navy/15 px-3 py-2.5 text-sm outline-none focus:border-gold"
                 />
+                <p id="phone-help" role={showPhoneError ? "alert" : undefined} className={`text-xs leading-6 ${showPhoneError ? "text-red-600" : "text-navy/50"}`}>
+                  {showPhoneError ? "رقم الهاتف غير صالح. اكتب رقمًا مصريًا صحيحًا أو رقمًا دوليًا يبدأ بـ + أو 00." : "مثال: 01012345678 أو +201012345678. الأرقام العربية مقبولة."}
+                </p>
                 <select
                   value={customer.governorate}
                   onChange={(e) => setCustomer((c) => ({ ...c, governorate: e.target.value }))}

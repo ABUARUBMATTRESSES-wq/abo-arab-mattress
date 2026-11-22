@@ -1,6 +1,7 @@
 "use client";
 
 import { Product } from "@/lib/types";
+import { getDefaultVariant } from "@/lib/products";
 import PriceTag from "./PriceTag";
 
 export default function CompareTable({ items }: { items: Product[] }) {
@@ -8,8 +9,11 @@ export default function CompareTable({ items }: { items: Product[] }) {
 
   const rows: { label: string; render: (p: Product) => React.ReactNode }[] = [
     { label: "السعر", render: (p) => {
-      const v = p.variantPrices[0];
-      return v ? <PriceTag price={v.price} originalPrice={v.originalPrice} size="sm" /> : "—";
+      const v = getDefaultVariant(p);
+      if (!v) return "—";
+      const size = p.sizes.find(s => s.id === v.sizeId);
+      const height = p.heights.find(h => h.id === v.heightId);
+      return <div className="space-y-2"><PriceTag price={v.price} originalPrice={v.originalPrice} size="sm" /><p className="text-xs leading-6 text-navy/60">المقاس: {size?.label}، الارتفاع: {height?.label}</p></div>;
     }},
     { label: "نوع السوست", render: (p) => p.springType ?? "—" },
     { label: "درجة الصلابة", render: (p) => p.firmness ?? "—" },
