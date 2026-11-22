@@ -81,7 +81,7 @@ export default function ShopPageClient() {
         <div className="mb-8 flex flex-wrap items-center justify-between gap-4">
           <div>
             <h1 className="section-title">المتجر</h1>
-            <p className="mt-1 text-sm text-navy/60">{filteredProducts.length} منتج متاح</p>
+            <p className="mt-1 text-sm text-navy/60">{filteredProducts.length} منتج</p>
           </div>
           <button
             onClick={() => setCompareMode((v) => !v)}
