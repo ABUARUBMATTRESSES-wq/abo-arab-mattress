@@ -48,6 +48,7 @@ export default function ShopFilters({
         </div>
       </div>
 
+      {springTypesList.length > 0 && (
       <div>
         <p className="mb-2 text-sm font-extrabold text-navy">نوع السوست</p>
         <div className="flex flex-wrap gap-2">
@@ -61,7 +62,9 @@ export default function ShopFilters({
           ))}
         </div>
       </div>
+      )}
 
+      {firmnessList.length > 0 && (
       <div>
         <p className="mb-2 text-sm font-extrabold text-navy">درجة الصلابة</p>
         <div className="flex flex-wrap gap-2">
@@ -75,6 +78,7 @@ export default function ShopFilters({
           ))}
         </div>
       </div>
+      )}
 
       <div>
         <p className="mb-2 text-sm font-extrabold text-navy">الارتفاع</p>
