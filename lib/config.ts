@@ -10,14 +10,14 @@ export const siteConfig = {
 
   // رقم واتساب الإدارة (بصيغة دولية بدون + أو صفر في البداية)
   // مثال لمصر: بدل 01012345678 يبقى 201012345678
-  whatsappNumber: "201000000000",
+  whatsappNumber: "201551600820",
 
   // بريد ورقم تواصل إضافي
-  phoneDisplay: "01000000000",
+  phoneDisplay: "01002405715",
   email: "info@aboarab-mattress.com",
 
   // العنوان
-  address: "القاهرة، جمهورية مصر العربية",
+  address: "123 حسن المأمون أمام النادي الأهلي مول فرنتشر تاون معرض أبوعرب للمراتب",
 
   // روابط السوشيال ميديا
   social: {
@@ -27,13 +27,13 @@ export const siteConfig = {
   },
 
   // Meta Pixel ID — للحصول عليه من Facebook Events Manager
-  metaPixelId: "000000000000000",
+  metaPixelId: "1184874403972925",
 
   // حد الشحن المجاني بالجنيه
-  freeShippingThreshold: 3000,
+  freeShippingThreshold: 20000,
 
   // رسوم الشحن الثابتة لو الطلب أقل من حد الشحن المجاني
-  shippingFee: 150,
+  shippingFee: 500,
 
   // العملة
   currency: "ج.م",
