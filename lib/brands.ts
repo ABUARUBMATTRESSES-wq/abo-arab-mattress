@@ -171,6 +171,10 @@ export function getConstructionClass(p: Product): ConstructionClass | null {
   if (s === "سوست متصلة" || s === "مراتب متصلة (أمريكي)" || s === "مراتب متصلة ألماني") return "connected";
   if (s === "سوست منفصلة" || s === "مراتب منفصلة(بوكيت)") return memoryFoam ? "pocket-memory-foam" : "pocket";
   if ((s === "مراتب بدون سوست" || s === "فوم" || s === "مراتب رول") && medical) return "medical-no-springs";
+  // استرجاع من نص الكتالوج نفسه: عبارات صريحة عن التصنيع في الاسم/الوصف/المواصفات (بدون استنتاج).
+  const text = p.name + " " + p.shortDescription + " " + p.specs.map((x) => x.label + " " + x.value).join(" ");
+  if (/سوست منفصل[ةه]|بوكيت|بوكت/.test(text)) return memoryFoam ? "pocket-memory-foam" : "pocket";
+  if (/سوست متصل[ةه]/.test(text)) return "connected";
   return null;
 }
 
