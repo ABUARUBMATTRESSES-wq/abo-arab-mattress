@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import Script from "next/script";
 import { Trash2, Minus, Plus, Truck, ShoppingBag, MessageCircle } from "lucide-react";
@@ -52,9 +52,32 @@ export default function CartPage() {
   const [saving, setSaving] = useState(false);
   const [orderError, setOrderError] = useState("");
 
+  const turnstileBoxRef = useRef<HTMLDivElement>(null);
+  const turnstileWidgetRef = useRef<string | null>(null);
+
+  // Explicit render: implicit .cf-turnstile scanning misses the div because
+  // the api.js script loads before/after React paints in a static SPA.
   useEffect(() => {
-    (window as unknown as Record<string, unknown>).onTurnstileOk = (token: string) => setTurnstileToken(token);
-    (window as unknown as Record<string, unknown>).onTurnstileGone = () => setTurnstileToken("");
+    let cancelled = false;
+    const tryRender = () => {
+      if (cancelled) return;
+      const ts = (window as unknown as { turnstile?: { render: (el: HTMLElement, opts: Record<string, unknown>) => string } }).turnstile;
+      if (ts && turnstileBoxRef.current && turnstileWidgetRef.current === null) {
+        turnstileWidgetRef.current = ts.render(turnstileBoxRef.current, {
+          sitekey: TURNSTILE_SITE_KEY,
+          theme: "light",
+          callback: (token: string) => setTurnstileToken(token),
+          "expired-callback": () => setTurnstileToken(""),
+          "error-callback": () => setTurnstileToken(""),
+        });
+        return;
+      }
+      setTimeout(tryRender, 500);
+    };
+    tryRender();
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   const shippingFee = calculateShipping(items, subtotal, customer.governorate);
@@ -369,14 +392,7 @@ export default function CartPage() {
                 />
               </div>
 
-              <div
-                className="cf-turnstile"
-                data-sitekey={TURNSTILE_SITE_KEY}
-                data-callback="onTurnstileOk"
-                data-expired-callback="onTurnstileGone"
-                data-error-callback="onTurnstileGone"
-                data-theme="light"
-              ></div>
+              <div ref={turnstileBoxRef} className="min-h-[65px]" />
               <button onClick={handleCheckout} disabled={!canSubmit || saving} className="btn-whatsapp w-full disabled:opacity-40">
                 <MessageCircle size={20} /> {saving ? "جاري تسجيل الطلب..." : "إتمام الطلب عبر واتساب"}
               </button>
