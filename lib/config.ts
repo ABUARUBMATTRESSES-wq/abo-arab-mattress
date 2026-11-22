@@ -14,16 +14,17 @@ export const siteConfig = {
 
   // بريد ورقم تواصل إضافي
   phoneDisplay: "01002405715",
-  email: "info@aboarab-mattress.com",
 
   // العنوان
-  address: "123 حسن المأمون أمام النادي الأهلي مول فرنتشر تاون معرض أبوعرب للمراتب",
+  address: "123 حسن المأمون أمام النادي الاهلي مول فرنتشر تاون معرض ابوعرب للمراتب",
+
+  mapsUrl: "https://maps.app.goo.gl/wJQrP8GuZHez48RB8?g_st=ac",
 
   // روابط السوشيال ميديا
   social: {
-    facebook: "https://facebook.com/aboarabmattress",
-    instagram: "https://instagram.com/aboarabmattress",
-    tiktok: "https://tiktok.com/@aboarabmattress",
+    facebook: "https://www.facebook.com/share/19DaFgGLXq/",
+    instagram: "https://www.instagram.com/aboarbmattresse?avpt=a2hicHp1YWc1OXQ=",
+    tiktok: "https://www.tiktok.com/@abo.arab.mattress?_r=1&_t=ZS-9BclLM8GmYA",
   },
 
   // Meta Pixel ID — للحصول عليه من Facebook Events Manager
