@@ -54,9 +54,11 @@ export default function ProductCard({
 
       <div className="flex flex-1 flex-col gap-2 p-4">
         <Link href={`/product/${product.slug}`}>
-          <h3 className="font-extrabold text-navy line-clamp-1">{product.name}</h3>
+          <h3 className="font-extrabold text-navy line-clamp-2 leading-6">{product.name}</h3>
         </Link>
-        <p className="line-clamp-2 text-sm text-navy/60">{product.shortDescription}</p>
+        {product.shortDescription !== product.name && (
+          <p className="line-clamp-2 text-sm text-navy/60">{product.shortDescription}</p>
+        )}
 
         {product.reviewsCount > 0 && (
           <div className="mt-1 flex items-center gap-1 text-xs text-navy/60">
@@ -72,7 +74,7 @@ export default function ProductCard({
           </div>
         )}
 
-        <Link href={`/product/${product.slug}`} className="btn-primary mt-3 w-full !py-2.5 text-sm">
+        <Link href={`/product/${product.slug}`} className="btn-primary mt-3 w-full !py-2.5 !px-2 text-sm whitespace-nowrap">
           عرض التفاصيل
         </Link>
       </div>
