@@ -1,0 +1,80 @@
+"use client";
+
+import Link from "next/link";
+import { Star, Scale, Sparkles } from "lucide-react";
+import { Product } from "@/lib/types";
+import PriceTag from "./PriceTag";
+
+export default function ProductCard({
+  product,
+  compareMode = false,
+  isComparing = false,
+  onToggleCompare,
+}: {
+  product: Product;
+  compareMode?: boolean;
+  isComparing?: boolean;
+  onToggleCompare?: (id: string) => void;
+}) {
+  const defaultVariant =
+    product.variantPrices.find((v) => v.sizeId === product.sizes[0]?.id && v.heightId === product.heights[0]?.id) ??
+    product.variantPrices[0];
+
+  return (
+    <div className="card group relative flex flex-col overflow-hidden transition hover:-translate-y-1 hover:border-gold">
+      <Link href={`/product/${product.slug}`} className="relative block aspect-[4/3] overflow-hidden bg-navy/5">
+        <img
+          src={product.images[0]}
+          alt={product.name}
+          className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
+        />
+        <div className="absolute top-3 right-3 flex flex-col gap-2">
+          {product.isNew && <span className="badge-navy">جديد</span>}
+          {defaultVariant && defaultVariant.originalPrice > defaultVariant.price && (
+            <span className="badge-gold">
+              <Sparkles size={12} /> خصم {Math.round(((defaultVariant.originalPrice - defaultVariant.price) / defaultVariant.originalPrice) * 100)}%
+            </span>
+          )}
+        </div>
+        {compareMode && (
+          <button
+            type="button"
+            onClick={(e) => {
+              e.preventDefault();
+              onToggleCompare?.(product.id);
+            }}
+            className={`absolute top-3 left-3 flex h-9 w-9 items-center justify-center rounded-full shadow-luxury transition ${
+              isComparing ? "bg-gold-gradient text-navy" : "bg-white text-navy/60"
+            }`}
+            aria-label="إضافة للمقارنة"
+          >
+            <Scale size={16} />
+          </button>
+        )}
+      </Link>
+
+      <div className="flex flex-1 flex-col gap-2 p-4">
+        <Link href={`/product/${product.slug}`}>
+          <h3 className="font-extrabold text-navy line-clamp-1">{product.name}</h3>
+        </Link>
+        <p className="line-clamp-2 text-sm text-navy/60">{product.shortDescription}</p>
+
+        <div className="mt-1 flex items-center gap-1 text-xs text-navy/60">
+          <Star size={14} className="fill-gold text-gold" />
+          <span className="font-bold text-navy">{product.rating}</span>
+          <span>({product.reviewsCount} تقييم)</span>
+        </div>
+
+        {defaultVariant && (
+          <div className="mt-auto pt-3">
+            <PriceTag price={defaultVariant.price} originalPrice={defaultVariant.originalPrice} />
+          </div>
+        )}
+
+        <Link href={`/product/${product.slug}`} className="btn-primary mt-3 w-full !py-2.5 text-sm">
+          عرض التفاصيل
+        </Link>
+      </div>
+    </div>
+  );
+}

@@ -1,0 +1,86 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --font-cairo: "Cairo", "Tajawal", sans-serif;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-cairo);
+  background-color: #f8fafc;
+  color: #0b2545;
+}
+
+::selection {
+  background-color: #d4af37;
+  color: #0b2545;
+}
+
+/* scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #f8fafc;
+}
+::-webkit-scrollbar-thumb {
+  background: #0b2545;
+  border-radius: 999px;
+}
+
+.container-app {
+  @apply mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8;
+}
+
+.btn-primary {
+  @apply inline-flex items-center justify-center gap-2 rounded-xl bg-navy px-6 py-3 font-bold text-white shadow-luxury transition hover:bg-navy-light active:scale-95;
+}
+
+.btn-gold {
+  @apply inline-flex items-center justify-center gap-2 rounded-xl bg-gold-gradient px-6 py-3 font-bold text-navy shadow-gold transition hover:brightness-105 active:scale-95;
+}
+
+.btn-whatsapp {
+  @apply inline-flex items-center justify-center gap-2 rounded-xl bg-[#25D366] px-6 py-3 font-bold text-white shadow-luxury transition hover:brightness-105 active:scale-95;
+}
+
+.btn-outline {
+  @apply inline-flex items-center justify-center gap-2 rounded-xl border-2 border-navy px-6 py-3 font-bold text-navy transition hover:bg-navy hover:text-white active:scale-95;
+}
+
+.card {
+  @apply rounded-2xl border border-navy/10 bg-white shadow-luxury;
+}
+
+.badge-gold {
+  @apply inline-flex items-center gap-1 rounded-full bg-gold-gradient px-3 py-1 text-xs font-bold text-navy shadow-gold;
+}
+
+.badge-navy {
+  @apply inline-flex items-center gap-1 rounded-full bg-navy px-3 py-1 text-xs font-bold text-white;
+}
+
+.section-title {
+  @apply text-2xl font-extrabold text-navy sm:text-3xl;
+}
+
+.animate-fade-up {
+  animation: fadeUp 0.5s ease both;
+}
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
