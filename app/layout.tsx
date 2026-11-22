@@ -22,13 +22,11 @@ export const metadata: Metadata = {
     siteName: siteConfig.brandNameAr,
     title: `${siteConfig.brandNameAr} | Abo Arab Mattress`,
     description: SITE_DESCRIPTION,
-    images: [{ url: "/og-image.png", width: 1200, height: 630, alt: siteConfig.brandNameAr }],
   },
   twitter: {
     card: "summary_large_image",
     title: `${siteConfig.brandNameAr} | Abo Arab Mattress`,
     description: SITE_DESCRIPTION,
-    images: ["/og-image.png"],
   },
 };
 
