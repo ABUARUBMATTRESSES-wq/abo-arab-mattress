@@ -11,11 +11,13 @@ export default function ProductCard({
   compareMode = false,
   isComparing = false,
   onToggleCompare,
+  eager = false,
 }: {
   product: Product;
   compareMode?: boolean;
   isComparing?: boolean;
   onToggleCompare?: (id: string) => void;
+  eager?: boolean;
 }) {
   const defaultVariant = getDefaultVariant(product);
 
@@ -25,6 +27,8 @@ export default function ProductCard({
         <img
           src={product.images[0]}
           alt={product.name}
+          loading={eager ? "eager" : "lazy"}
+          decoding="async"
           className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
         />
         <div className="absolute top-3 right-3 flex flex-col gap-2">
