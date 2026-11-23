@@ -48,6 +48,8 @@ export default function Hero() {
             <img
               src="https://images.unsplash.com/photo-1631049307264-da0ec9d70304?auto=format&fit=crop&w=900&q=80"
               alt="غرفة نوم"
+              fetchPriority="high"
+              decoding="async"
               className="h-full w-full rounded-3xl object-cover shadow-luxury"
             />
 
