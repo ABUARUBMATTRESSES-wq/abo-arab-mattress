@@ -154,7 +154,7 @@ export default function CartPage() {
       total,
     });
 
-    trackEvent("Purchase", {
+    trackEvent("Lead", {
       value: total,
       currency: "EGP",
       content_ids: items.map((i) => i.productId),
