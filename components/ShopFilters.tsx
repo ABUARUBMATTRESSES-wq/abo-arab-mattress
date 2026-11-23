@@ -67,22 +67,6 @@ export default function ShopFilters({
         </div>
       </div>
 
-      {springTypesList.length > 0 && (
-      <div>
-        <p className="mb-2 text-sm font-extrabold text-navy">نوع السوست</p>
-        <div className="flex flex-wrap gap-2">
-          <FilterChip active={filters.springType === "all"} onClick={() => update({ springType: "all" })}>
-            الكل
-          </FilterChip>
-          {springTypesList.map((s) => (
-            <FilterChip key={s} active={filters.springType === s} onClick={() => update({ springType: s })}>
-              {s}
-            </FilterChip>
-          ))}
-        </div>
-      </div>
-      )}
-
       <div>
         <p className="mb-2 text-sm font-extrabold text-navy">التصنيف حسب التصنيع</p>
         <div className="flex flex-wrap gap-2">
