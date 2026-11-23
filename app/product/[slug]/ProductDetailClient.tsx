@@ -24,8 +24,25 @@ export default function ProductDetailClient({ product }: { product: Product }) {
     const params = new URLSearchParams(window.location.search);
     const s = params.get("size");
     const h = params.get("height");
-    if (s && product.sizes.some((x) => x.id === s)) setSizeId(s);
-    if (h && product.heights.some((x) => x.id === h)) setHeightId(h);
+    const validSize = s && product.sizes.some((x) => x.id === s) ? s : undefined;
+    const validHeight = h && product.heights.some((x) => x.id === h) ? h : undefined;
+    if (!validSize && !validHeight) return;
+    const selected = product.variantPrices.find((v) =>
+      (!validSize || v.sizeId === validSize) && (!validHeight || v.heightId === validHeight)
+    );
+    // A recognized size and height can still be an unavailable pair.
+    // Keep the valid default rather than rendering an empty product page.
+    const actual = selected ?? product.variantPrices.find((v) =>
+      v.sizeId === product.sizes[0]?.id && v.heightId === product.heights[0]?.id
+    ) ?? product.variantPrices[0];
+    if (actual) {
+      setSizeId(actual.sizeId);
+      setHeightId(actual.heightId);
+      const url = new URL(window.location.href);
+      url.searchParams.set("size", actual.sizeId);
+      url.searchParams.set("height", actual.heightId);
+      window.history.replaceState(window.history.state, "", url);
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [product.id]);
   const [quantity, setQuantity] = useState(1);
