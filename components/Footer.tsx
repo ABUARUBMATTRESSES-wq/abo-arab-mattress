@@ -36,6 +36,7 @@ export default function Footer() {
             <li><Link href="/cart" className="hover:text-white">سلة المشتريات</Link></li>
             <li><Link href="/contact" className="hover:text-white">استفسارات الضمان والاستبدال</Link></li>
             <li><Link href="/#faq" className="hover:text-white">الأسئلة الشائعة</Link></li>
+            <li><Link href="/returns-policy" className="hover:text-white">سياسة الاستبدال والاسترجاع</Link></li>
           </ul>
         </div>
 
