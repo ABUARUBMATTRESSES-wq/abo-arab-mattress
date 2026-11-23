@@ -193,11 +193,12 @@ export default function CartPage() {
             <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-full bg-gold-gradient text-navy">
               <ShoppingBag size={28} />
             </div>
-            <h1 className="section-title mb-3">طلبك جاهز في واتساب</h1>
+            <h1 className="section-title mb-3">تم تسجيل طلبك</h1>
+            <p className="mb-3 text-navy/60">
+              طلبك اتسجّل ومستني تأكيد المعرض. مفيش أي دفع تم على الموقع.
+            </p>
             <p className="mb-6 text-navy/60">
-              فتحنا واتساب برسالة فيها تفاصيل طلبك. اضغط إرسال هناك عشان الطلب
-              يوصلنا فعلًا. لو قفلت واتساب من غير إرسال، الطلب مش هيوصلنا.
-              وسلة مشترياتك محفوظة زي ما هي وتقدر ترجعلها.
+              فتحنا لك واتساب بتفاصيل الطلب. اضغط إرسال هناك عشان رسالتك توصلنا ونكمّل تأكيد الطلب. لو ما بعتّش الرسالة، الطلب يفضل مسجّل في الموقع، لكن رسالة واتساب مش هتوصلنا. وسلتك محفوظة وتقدر ترجعلها.
             </p>
             <div className="flex flex-col gap-3">
               <Link href="/shop" className="btn-primary w-full">
