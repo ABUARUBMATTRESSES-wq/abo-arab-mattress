@@ -5,6 +5,7 @@ import { Star, Scale, Sparkles } from "lucide-react";
 import { Product } from "@/lib/types";
 import { getDefaultVariant } from "@/lib/products";
 import PriceTag from "./PriceTag";
+import { productImageAtWidth, productImageSrcSet } from "@/lib/product-images";
 
 export default function ProductCard({
   product,
@@ -25,7 +26,9 @@ export default function ProductCard({
     <div className="card group relative flex flex-col overflow-hidden transition hover:-translate-y-1 hover:border-gold">
       <Link href={`/product/${product.slug}`} className="relative block aspect-[4/3] overflow-hidden bg-navy/5">
         <img
-          src={product.images[0]}
+          src={productImageAtWidth(product.images[0], 640)}
+          srcSet={productImageSrcSet(product.images[0])}
+          sizes="(min-width: 1024px) 300px, (min-width: 640px) 45vw, 50vw"
           alt={product.name}
           loading={eager ? "eager" : "lazy"}
           decoding="async"
