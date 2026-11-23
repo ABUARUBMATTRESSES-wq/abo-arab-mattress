@@ -101,10 +101,11 @@ export default function ShopPageClient() {
               <div className="card p-10 text-center text-navy/60">لا توجد منتجات مطابقة لهذه الفلاتر</div>
             ) : (
               <div className="grid grid-cols-2 gap-4 sm:gap-6 lg:grid-cols-3">
-                {filteredProducts.map((p) => (
+                {filteredProducts.map((p, i) => (
                   <ProductCard
                     key={p.id}
                     product={p}
+                    eager={i < 6}
                     compareMode={compareMode}
                     isComparing={compareIds.includes(p.id)}
                     onToggleCompare={toggleCompare}
