@@ -44,7 +44,7 @@ export default function ContactPage() {
             </span>
             <p className="font-extrabold text-navy">موقعنا</p>
             <p className="text-sm text-navy/60">{siteConfig.address}</p>
-            <span className="text-sm font-bold text-gold-dark underline underline-offset-4">الوصول للمعرض</span>
+            <span className="text-sm font-bold text-[#85691a] underline underline-offset-4">الوصول للمعرض</span>
           </a>
         </div>
 
