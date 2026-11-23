@@ -12,12 +12,15 @@ import ShopFilters, { defaultFilters, FilterState } from "@/components/ShopFilte
 import { products } from "@/lib/products";
 import { getProductBrandId, BrandId, getConstructionClass, ConstructionClass } from "@/lib/brands";
 
+const PAGE_SIZE = 24;
+
 export default function ShopPageClient() {
   const searchParams = useSearchParams();
   const [filters, setFilters] = useState<FilterState>(defaultFilters);
   const [compareMode, setCompareMode] = useState(false);
   const [compareIds, setCompareIds] = useState<string[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
+  const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
 
   useEffect(() => {
     const category = searchParams.get("category");
@@ -64,6 +67,13 @@ export default function ShopPageClient() {
     });
   }, [filters, searchTerm]);
 
+  useEffect(() => {
+    setVisibleCount(PAGE_SIZE);
+  }, [filters, searchTerm]);
+
+  const visibleProducts = filteredProducts.slice(0, visibleCount);
+  const remaining = filteredProducts.length - visibleProducts.length;
+
   const toggleCompare = (id: string) => {
     setCompareIds((prev) => {
       if (prev.includes(id)) return prev.filter((p) => p !== id);
@@ -101,7 +111,7 @@ export default function ShopPageClient() {
               <div className="card p-10 text-center text-navy/60">لا توجد منتجات مطابقة لهذه الفلاتر</div>
             ) : (
               <div className="grid grid-cols-2 gap-4 sm:gap-6 lg:grid-cols-3">
-                {filteredProducts.map((p, i) => (
+                {visibleProducts.map((p, i) => (
                   <ProductCard
                     key={p.id}
                     product={p}
@@ -111,6 +121,20 @@ export default function ShopPageClient() {
                     onToggleCompare={toggleCompare}
                   />
                 ))}
+              </div>
+            )}
+            {remaining > 0 && (
+              <div className="mt-8 text-center">
+                <p className="mb-3 text-sm text-navy/70">
+                  معروض {visibleProducts.length} من {filteredProducts.length} منتج
+                </p>
+                <button
+                  type="button"
+                  onClick={() => setVisibleCount((n) => n + PAGE_SIZE)}
+                  className="rounded-xl border border-navy/20 px-6 py-3 text-sm font-bold text-navy transition hover:border-gold"
+                >
+                  عرض المزيد ({Math.min(PAGE_SIZE, remaining)} منتج)
+                </button>
               </div>
             )}
           </div>
