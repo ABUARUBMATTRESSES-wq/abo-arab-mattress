@@ -23,5 +23,31 @@ export function generateMetadata({ params }: { params: { slug: string } }) {
 export default function ProductPage({ params }: { params: { slug: string } }) {
   const product = getProductBySlug(params.slug);
   if (!product) notFound();
-  return <ProductDetailClient product={product} />;
+  const prices = product.variantPrices.map((v) => v.price).filter((n) => Number.isFinite(n) && n > 0);
+  const jsonLd =
+    prices.length > 0
+      ? {
+          "@context": "https://schema.org",
+          "@type": "Product",
+          name: product.name,
+          description: product.shortDescription,
+          image: product.images.slice(0, 1),
+          url: `https://abo-arab-mattress.pages.dev/product/${product.slug}`,
+          offers: {
+            "@type": "AggregateOffer",
+            priceCurrency: "EGP",
+            lowPrice: Math.min(...prices),
+            highPrice: Math.max(...prices),
+            offerCount: prices.length,
+          },
+        }
+      : null;
+  return (
+    <>
+      {jsonLd && (
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c") }} />
+      )}
+      <ProductDetailClient product={product} />
+    </>
+  );
 }
