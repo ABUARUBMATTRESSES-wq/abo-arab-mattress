@@ -48,6 +48,7 @@ export default function CartPage() {
     notes: "",
   });
   const [submitted, setSubmitted] = useState(false);
+  const checkoutLockRef = useRef(false);
   const [turnstileToken, setTurnstileToken] = useState("");
   const [saving, setSaving] = useState(false);
   const [orderError, setOrderError] = useState("");
@@ -95,55 +96,61 @@ export default function CartPage() {
   );
 
   const handleCheckout = async () => {
-    if (!canSubmit || saving) return;
+    if (!canSubmit || saving || checkoutLockRef.current) return;
     if (!turnstileToken) {
       setOrderError("من فضلك أكمل خطوة التحقق الأمني بالأسفل قبل إتمام الطلب.");
       return;
     }
+    checkoutLockRef.current = true;
     setSaving(true);
     setOrderError("");
 
-    const orderId = `AA-${Date.now().toString().slice(-6)}`;
+    let orderId = "";
 
     // The order must be stored server-side before the WhatsApp handoff.
     // On any failure we stop here: no success screen, no WhatsApp window.
     try {
+      const payload = {
+        name: (customer.name || "").trim(), phone: normalizePhone(customer.phone),
+        governorate: customer.governorate, address: (customer.address || "").trim(),
+        notes: (customer.notes || "").trim(),
+        items: items.map((i) => ({ productId: i.productId, sizeLabel: i.sizeLabel, heightLabel: i.heightLabel, quantity: i.quantity })),
+        total,
+      };
+      // Keep one random id for retries of the same order, even after a lost response/reload.
+      // Only a SHA-256 fingerprint and random id are kept here, not customer data.
+      const digest = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(JSON.stringify(payload)));
+      const fingerprint = Array.from(new Uint8Array(digest)).map((b) => b.toString(16).padStart(2, "0")).join("");
+      const newId = () => `AA-${crypto.randomUUID()}`;
+      orderId = newId();
+      try {
+        const previous = JSON.parse(sessionStorage.getItem("abo_arab_pending_order") || "null");
+        if (previous?.fingerprint === fingerprint && /^AA-[0-9a-f-]{36}$/i.test(previous.id)) orderId = previous.id;
+        sessionStorage.setItem("abo_arab_pending_order", JSON.stringify({ fingerprint, id: orderId }));
+      } catch { /* Storage can be disabled. The random id still avoids time-based collisions. */ }
       const res = await fetch("/api/order", {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify({
-          id: orderId,
-          name: (customer.name || "").trim(),
-          phone: normalizePhone(customer.phone),
-          governorate: customer.governorate,
-          address: (customer.address || "").trim(),
-          notes: (customer.notes || "").trim(),
-          items: items.map((i) => ({
-            productId: i.productId,
-            sizeLabel: i.sizeLabel,
-            heightLabel: i.heightLabel,
-            quantity: i.quantity,
-          })),
-          total,
-          turnstileToken,
-        }),
+        method: "POST", headers: { "content-type": "application/json" },
+        body: JSON.stringify({ ...payload, id: orderId, turnstileToken }),
       });
       const result = await res.json().catch(() => null);
-      if (!res.ok || !result || !result.ok) {
+      if (!res.ok || !result || !result.ok || result.id !== orderId || result.total !== total) {
         (window as unknown as { turnstile?: { reset: () => void } }).turnstile?.reset();
         setTurnstileToken("");
-        setOrderError("حصلت مشكلة أثناء تسجيل الطلب، والطلب لم يُحفظ ولم يُفتح واتساب. جرب مرة أخرى، ولو المشكلة مستمرة تواصل معنا على واتساب.");
+        setOrderError("تعذّر تأكيد تسجيل الطلب، ولم يُفتح واتساب. أعد التحقق وحاول مرة أخرى، ولو المشكلة مستمرة تواصل معنا على واتساب.");
         return;
       }
     } catch {
       (window as unknown as { turnstile?: { reset: () => void } }).turnstile?.reset();
       setTurnstileToken("");
-      setOrderError("فشل الاتصال بالخادم، والطلب لم يُحفظ ولم يُفتح واتساب. تأكد من اتصالك بالإنترنت وجرب مرة أخرى.");
+      setOrderError("تعذّر تأكيد تسجيل الطلب بسبب الاتصال، ولم يُفتح واتساب. تحقق من اتصالك وأعد المحاولة بنفس البيانات لتجنب تكرار الطلب.");
       return;
     } finally {
       setSaving(false);
+      checkoutLockRef.current = false;
     }
 
+    // A confirmed success completes this attempt; a later intentional order gets a new id.
+    try { sessionStorage.removeItem("abo_arab_pending_order"); } catch { /* optional storage */ }
     saveLead({
       id: orderId,
       createdAt: new Date().toISOString(),
@@ -178,8 +185,7 @@ export default function CartPage() {
       customer.notes ? `\nملاحظات: ${customer.notes}` : ""
     }`;
 
-    // Cart is intentionally kept: the order only reaches us if the customer
-    // presses send in WhatsApp, so the cart must survive an abandoned compose.
+    // The database order is saved already; keep the cart if WhatsApp compose is abandoned.
     window.open(buildWhatsappLink(message), "_blank");
     setSubmitted(true);
   };
