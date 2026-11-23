@@ -1,0 +1,7 @@
+# Content-addressed Next.js assets are safe to keep across deployments.
+/_next/static/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# Product image filenames carry content hashes. Keep them on repeat visits.
+/img/*
+  Cache-Control: public, max-age=31536000, immutable
