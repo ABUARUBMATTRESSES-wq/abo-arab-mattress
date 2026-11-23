@@ -210,6 +210,11 @@ export default function ProductDetailClient({ product }: { product: Product }) {
 
             )}
 
+            {/* مقاسات خاصة */}
+            <p className="mb-6 rounded-xl border border-gold/40 bg-gold/10 p-3 text-sm font-bold text-navy">
+              بنفّذ مقاسات خاصة حسب الطلب، تواصل معانا لمعرفة التفاصيل
+            </p>
+
             {/* الكمية */}
             <div className="mb-6 flex items-center gap-3">
               <p className="text-sm font-extrabold text-navy">الكمية</p>
