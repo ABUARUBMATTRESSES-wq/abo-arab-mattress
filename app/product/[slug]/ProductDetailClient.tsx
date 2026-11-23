@@ -104,6 +104,8 @@ export default function ProductDetailClient({ product }: { product: Product }) {
               <div className="flex gap-2">
                 {product.images.map((img, i) => (
                   <button
+                    type="button"
+                    aria-label={`صورة ${i + 1} لمنتج ${product.name}`}
                     key={img}
                     onClick={() => setActiveImage(i)}
                     className={`h-16 w-16 overflow-hidden rounded-lg border-2 ${
