@@ -171,9 +171,11 @@ export function getConstructionClass(p: Product): ConstructionClass | null {
   if (ownerConfirmedMedicalNoSpring.includes(p.id)) return "medical-no-springs";
   const memoryFoam = /ميمور[يى]/.test(p.name) || /ميمور[يى]/.test(p.shortDescription);
   const medical = p.name.includes("طبي");
+  const existingMedicalNoSprings = /بدون سوست/.test(p.name) && p.specs.some((x) => x.label === "النوع" && /طبي/.test(x.value));
   const s = p.springType;
   if (s === "سوست متصلة" || s === "مراتب متصلة (أمريكي)" || s === "مراتب متصلة ألماني") return "connected";
   if (s === "سوست منفصلة" || s === "مراتب منفصلة(بوكيت)") return memoryFoam ? "pocket-memory-foam" : "pocket";
+  if (existingMedicalNoSprings) return "medical-no-springs";
   if ((s === "مراتب بدون سوست" || s === "فوم" || s === "مراتب رول") && medical) return "medical-no-springs";
   // استرجاع من نص الكتالوج نفسه: عبارات صريحة عن التصنيع في الاسم/الوصف/المواصفات (بدون استنتاج).
   const text = p.name + " " + p.shortDescription + " " + p.specs.map((x) => x.label + " " + x.value).join(" ");
@@ -183,4 +185,3 @@ export function getConstructionClass(p: Product): ConstructionClass | null {
 }
 
 export const constructionClassesList: ConstructionClass[] = ["connected", "pocket", "medical-no-springs", "pocket-memory-foam"];
-
