@@ -54,7 +54,7 @@ export default function ProductCard({
 
       <div className="flex flex-1 flex-col gap-2 p-4">
         <Link href={`/product/${product.slug}`}>
-          <h3 className="font-extrabold text-navy line-clamp-2 leading-6">{product.name}</h3>
+          <h2 className="font-extrabold text-navy line-clamp-2 leading-6">{product.name}</h2>
         </Link>
         {product.shortDescription !== product.name && (
           <p className="line-clamp-2 text-sm text-navy/60">{product.shortDescription}</p>
