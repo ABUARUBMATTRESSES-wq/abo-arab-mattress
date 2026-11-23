@@ -164,7 +164,7 @@ export const constructionClassLabels: Record<ConstructionClass, string> = {
 };
 
 // موديلات أكد المالك (23 نوفمبر 2026) إنها طبية بدون سوست؛ الاسم مبيقولش "طبي" فمحتاجة تحديد صريح.
-const ownerConfirmedMedicalNoSpring = ["comfy", "new-marriott-15-cm", "new-marriott-soft"];
+const ownerConfirmedMedicalNoSpring /* + romeo-juliet: موثّق «مرتبة طبية ريبوند» على موقع فوربد الرسمي */ = ["comfy", "new-marriott-15-cm", "new-marriott-soft", "romeo-juliet"];
 
 export function getConstructionClass(p: Product): ConstructionClass | null {
   if (p.category !== "mattresses") return null;
