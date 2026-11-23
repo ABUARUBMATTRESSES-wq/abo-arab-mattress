@@ -12,6 +12,7 @@ import { trackEvent } from "@/lib/pixel";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import PriceTag from "@/components/PriceTag";
+import { productImageAtWidth, productImageSrcSet } from "@/lib/product-images";
 
 export default function ProductDetailClient({ product }: { product: Product }) {
   const [activeImage, setActiveImage] = useState(0);
@@ -98,7 +99,7 @@ export default function ProductDetailClient({ product }: { product: Product }) {
           {/* معرض الصور */}
           <div>
             <div className="card mb-3 aspect-square overflow-hidden">
-              <img src={product.images[activeImage]} alt={product.name} className="h-full w-full object-cover" />
+              <img src={productImageAtWidth(product.images[activeImage], 960)} srcSet={productImageSrcSet(product.images[activeImage])} sizes="(min-width: 1024px) 560px, 100vw" decoding="async" fetchPriority="high" alt={product.name} className="h-full w-full object-cover" />
             </div>
             {product.images.length > 1 && (
               <div className="flex gap-2">
@@ -112,7 +113,7 @@ export default function ProductDetailClient({ product }: { product: Product }) {
                       activeImage === i ? "border-gold" : "border-transparent"
                     }`}
                   >
-                    <img src={img} alt="" className="h-full w-full object-cover" />
+                    <img src={productImageAtWidth(img, 160)} loading="lazy" decoding="async" alt="" className="h-full w-full object-cover" />
                   </button>
                 ))}
               </div>
@@ -285,7 +286,10 @@ export default function ProductDetailClient({ product }: { product: Product }) {
                 <div key={alt.product.id} className="card flex flex-col overflow-hidden">
                   <Link href={`/product/${alt.product.slug}?size=${sizeId}&height=${heightId}`} className="relative block aspect-[4/3] overflow-hidden bg-navy/5">
                     <img
-                      src={alt.product.images[0]}
+                      src={productImageAtWidth(alt.product.images[0], 640)}
+                      srcSet={productImageSrcSet(alt.product.images[0])}
+                      sizes="(min-width: 1024px) 360px, 50vw"
+                      decoding="async"
                       alt={alt.product.name}
                       className="h-full w-full object-cover"
                       loading="lazy"
