@@ -42,12 +42,12 @@ export default function ReturnsPolicyPage() {
                 href={buildWhatsappLink("السلام عليكم، حابب أطلب استبدال أو استرجاع، رقم الطلب: ")}
                 target="_blank"
                 rel="noreferrer"
-                className="font-bold text-gold-dark underline underline-offset-4"
+                className="font-bold text-[#85691a] underline underline-offset-4"
               >
                 واتساب
               </a>{" "}
               أو اتصل على{" "}
-              <a href="tel:01551600820" className="font-bold text-gold-dark underline underline-offset-4">
+              <a href="tel:01551600820" className="font-bold text-[#85691a] underline underline-offset-4">
                 ٠١٥٥١٦٠٠٨٢٠
               </a>
               ، مع ذكر رقم الطلب.
