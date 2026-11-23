@@ -163,8 +163,12 @@ export const constructionClassLabels: Record<ConstructionClass, string> = {
   "pocket-memory-foam": "سوست منفصلة بطبقة ميموري فوم",
 };
 
+// موديلات أكد المالك (23 نوفمبر 2026) إنها طبية بدون سوست؛ الاسم مبيقولش "طبي" فمحتاجة تحديد صريح.
+const ownerConfirmedMedicalNoSpring = ["comfy", "new-marriott-15-cm", "new-marriott-soft"];
+
 export function getConstructionClass(p: Product): ConstructionClass | null {
   if (p.category !== "mattresses") return null;
+  if (ownerConfirmedMedicalNoSpring.includes(p.id)) return "medical-no-springs";
   const memoryFoam = /ميمور[يى]/.test(p.name) || /ميمور[يى]/.test(p.shortDescription);
   const medical = p.name.includes("طبي");
   const s = p.springType;
