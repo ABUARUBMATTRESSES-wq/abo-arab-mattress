@@ -9,7 +9,7 @@ import ProductCard from "@/components/ProductCard";
 import CompareBar from "@/components/CompareBar";
 import CompareTable from "@/components/CompareTable";
 import ShopFilters, { defaultFilters, FilterState } from "@/components/ShopFilters";
-import { products } from "@/lib/products";
+import { products, getDefaultVariant } from "@/lib/products";
 import { getProductBrandId, BrandId, getConstructionClass, ConstructionClass } from "@/lib/brands";
 
 const PAGE_SIZE = 24;
@@ -21,6 +21,7 @@ export default function ShopPageClient() {
   const [compareIds, setCompareIds] = useState<string[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
+  const [sortOrder, setSortOrder] = useState<"default" | "asc" | "desc">("default");
 
   useEffect(() => {
     const category = searchParams.get("category");
@@ -69,9 +70,23 @@ export default function ShopPageClient() {
 
   useEffect(() => {
     setVisibleCount(PAGE_SIZE);
-  }, [filters, searchTerm]);
+  }, [filters, searchTerm, sortOrder]);
 
-  const visibleProducts = filteredProducts.slice(0, visibleCount);
+  const sortedProducts = useMemo(() => {
+    if (sortOrder === "default") return filteredProducts;
+    const priceOf = (p: (typeof products)[number]) => getDefaultVariant(p)?.price ?? Infinity;
+    const dir = sortOrder === "asc" ? 1 : -1;
+    return [...filteredProducts].sort((a, b) => {
+      const pa = priceOf(a);
+      const pb = priceOf(b);
+      if (pa === pb) return 0;
+      if (pa === Infinity) return 1;
+      if (pb === Infinity) return -1;
+      return (pa - pb) * dir;
+    });
+  }, [filteredProducts, sortOrder]);
+
+  const visibleProducts = sortedProducts.slice(0, visibleCount);
   const remaining = filteredProducts.length - visibleProducts.length;
 
   const toggleCompare = (id: string) => {
@@ -93,6 +108,19 @@ export default function ShopPageClient() {
             <h1 className="section-title">المتجر</h1>
             <p className="mt-1 text-sm text-navy/60">{filteredProducts.length} منتج</p>
           </div>
+          <div className="flex flex-wrap items-center gap-3">
+          <label className="flex items-center gap-2 text-sm font-bold text-navy">
+            <span>ترتيب</span>
+            <select
+              value={sortOrder}
+              onChange={(e) => setSortOrder(e.target.value as "default" | "asc" | "desc")}
+              className="rounded-xl border border-navy/15 bg-white px-3 py-2.5 text-sm font-bold text-navy"
+            >
+              <option value="default">الترتيب الافتراضي</option>
+              <option value="asc">السعر: الأرخص أولاً</option>
+              <option value="desc">السعر: الأغلى أولاً</option>
+            </select>
+          </label>
           <button
             onClick={() => setCompareMode((v) => !v)}
             className={`flex items-center gap-2 rounded-xl border px-4 py-2.5 text-sm font-bold transition ${
@@ -101,6 +129,7 @@ export default function ShopPageClient() {
           >
             <Scale size={18} /> وضع المقارنة
           </button>
+          </div>
         </div>
 
         <div className="grid gap-6 lg:grid-cols-[260px_1fr]">
