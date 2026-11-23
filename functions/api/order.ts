@@ -1,5 +1,5 @@
 import { products, getVariant } from "../../lib/products";
-import { siteConfig } from "../../lib/config";
+import { siteConfig, governorates } from "../../lib/config";
 import { calculateShipping } from "../../lib/shipping";
 
 interface Env {
@@ -31,9 +31,11 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
   const clientTotal = Number.isFinite(data.total) ? Math.round(data.total) : null;
   const token = String(data.turnstileToken || "");
 
-  if (!/^AA-\d{6}$/.test(id)) return json({ ok: false, error: "invalid order id" }, 400);
+  if (!/^AA-(?:\d{6}|[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12})$/i.test(id)) return json({ ok: false, error: "invalid order id" }, 400);
   if (name.length < 2) return json({ ok: false, error: "name required" }, 400);
   if (!/^\+?\d{10,15}$/.test(phone)) return json({ ok: false, error: "invalid phone" }, 400);
+  if (!governorates.includes(governorate)) return json({ ok: false, error: "invalid governorate" }, 400);
+  if (!address) return json({ ok: false, error: "address required" }, 400);
   if (!rawItems.length) return json({ ok: false, error: "empty cart" }, 400);
   if (!token) return json({ ok: false, error: "missing verification" }, 400);
 
@@ -80,8 +82,9 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
     return json({ ok: false, error: "total mismatch", expectedTotal: total }, 409);
   }
 
+  const itemsJson = JSON.stringify({ lines, subtotal, shippingFee, currency: siteConfig.currency });
   try {
-    await env.DB.prepare(
+    const stored = await env.DB.prepare(
       "INSERT INTO orders (id, created_at, customer_name, phone, governorate, address, notes, items_json, total_egp) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)"
     )
       .bind(
@@ -92,13 +95,26 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
         governorate,
         address,
         notes,
-        JSON.stringify({ lines, subtotal, shippingFee, currency: siteConfig.currency }),
+        itemsJson,
         total
       )
       .run();
+    if (!stored || stored.success !== true) return json({ ok: false, error: "storage error" }, 500);
   } catch (e: any) {
     if (String(e && e.message).includes("UNIQUE")) {
-      return json({ ok: true, duplicate: true, id, total });
+      // A key collision is not proof that THIS order was saved. Compare the whole normalized order.
+      try {
+        const existing = await env.DB.prepare(
+          "SELECT customer_name, phone, governorate, address, notes, items_json, total_egp FROM orders WHERE id = ?"
+        ).bind(id).first();
+        if (existing && existing.customer_name === name && existing.phone === phone &&
+            existing.governorate === governorate && existing.address === address &&
+            (existing.notes || "") === notes && existing.items_json === itemsJson &&
+            Number(existing.total_egp) === total) {
+          return json({ ok: true, duplicate: true, id, total });
+        }
+        return json({ ok: false, error: "order id conflict" }, 409);
+      } catch { return json({ ok: false, error: "storage verification error" }, 500); }
     }
     return json({ ok: false, error: "storage error" }, 500);
   }
