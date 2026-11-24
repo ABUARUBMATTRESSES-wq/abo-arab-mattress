@@ -9,6 +9,7 @@ import { findCheaperAlternatives } from "@/lib/brands";
 import { buildWhatsappLink, siteConfig } from "@/lib/config";
 import { useCart } from "@/context/CartContext";
 import { trackEvent } from "@/lib/pixel";
+import { CATALOG_IDS } from "@/lib/catalog-ids";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import PriceTag from "@/components/PriceTag";
@@ -64,7 +65,7 @@ export default function ProductDetailClient({ product }: { product: Product }) {
   useEffect(() => {
     trackEvent("ViewContent", {
       content_name: product.name,
-      content_ids: [product.id],
+      content_ids: [CATALOG_IDS[product.slug]?.v[`${sizeId}|${heightId}`] ?? product.id],
       value: variant?.price,
       currency: "EGP",
     });
@@ -84,13 +85,15 @@ export default function ProductDetailClient({ product }: { product: Product }) {
       image: product.images[0],
       sizeLabel: selectedSize.label,
       heightLabel: selectedHeight.label,
+      sizeId: selectedSize.id,
+      heightId: selectedHeight.id,
       unitPrice: variant.price,
       originalUnitPrice: variant.originalPrice,
       quantity,
     });
     trackEvent("AddToCart", {
       content_name: product.name,
-      content_ids: [product.id],
+      content_ids: [CATALOG_IDS[product.slug]?.v[`${sizeId}|${heightId}`] ?? product.id],
       value: variant.price * quantity,
       currency: "EGP",
     });
@@ -103,6 +106,7 @@ export default function ProductDetailClient({ product }: { product: Product }) {
   const handleWhatsappClick = () => {
     trackEvent("InitiateCheckout", {
       content_name: product.name,
+      content_ids: [CATALOG_IDS[product.slug]?.v[`${sizeId}|${heightId}`] ?? product.id],
       value: variant.price * quantity,
       currency: "EGP",
     });
