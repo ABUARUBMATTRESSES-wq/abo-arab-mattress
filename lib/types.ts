@@ -76,6 +76,8 @@ export interface CartItem {
   image: string;
   sizeLabel: string;
   heightLabel: string;
+  sizeId?: string;   // لاستخراج content_ids المطابقة للكتالوج
+  heightId?: string;
   unitPrice: number;
   originalUnitPrice: number;
   quantity: number;
