@@ -8,13 +8,16 @@ import { trackEvent } from "@/lib/pixel";
 
 export default function MetaPixelScript() {
   const pathname = usePathname();
+  // صفحة التتبع بتحمل كود تتبع سري في الرابط — البكسل ميتحملش عليها خالص.
+  const isTrack = pathname === "/track";
 
   useEffect(() => {
+    if (isTrack) return;
     trackEvent("PageView");
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pathname]);
+  }, [pathname, isTrack]);
 
-  if (!siteConfig.metaPixelId || siteConfig.metaPixelId.includes("000000000000000")) {
+  if (isTrack || !siteConfig.metaPixelId || siteConfig.metaPixelId.includes("000000000000000")) {
     return null; // لسه متركبش الـ Pixel ID الحقيقي في lib/config.ts
   }
 

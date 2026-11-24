@@ -1,6 +1,7 @@
 import { products, getVariant } from "../../lib/products";
 import { siteConfig, governorates } from "../../lib/config";
 import { calculateShipping } from "../../lib/shipping";
+import { newTrackingToken } from "./_session";
 
 interface Env {
   DB: D1Database;
@@ -82,10 +83,11 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
     return json({ ok: false, error: "total mismatch", expectedTotal: total }, 409);
   }
 
+  const trackingToken = newTrackingToken();
   const itemsJson = JSON.stringify({ lines, subtotal, shippingFee, currency: siteConfig.currency });
   try {
     const stored = await env.DB.prepare(
-      "INSERT INTO orders (id, created_at, customer_name, phone, governorate, address, notes, items_json, total_egp) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)"
+      "INSERT INTO orders (id, created_at, customer_name, phone, governorate, address, notes, items_json, total_egp, status, tracking_token) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'received', ?)"
     )
       .bind(
         id,
@@ -96,7 +98,8 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
         address,
         notes,
         itemsJson,
-        total
+        total,
+        trackingToken
       )
       .run();
     if (!stored || stored.success !== true) return json({ ok: false, error: "storage error" }, 500);
@@ -105,18 +108,18 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
       // A key collision is not proof that THIS order was saved. Compare the whole normalized order.
       try {
         const existing = await env.DB.prepare(
-          "SELECT customer_name, phone, governorate, address, notes, items_json, total_egp FROM orders WHERE id = ?"
+          "SELECT customer_name, phone, governorate, address, notes, items_json, total_egp, tracking_token FROM orders WHERE id = ?"
         ).bind(id).first();
         if (existing && existing.customer_name === name && existing.phone === phone &&
             existing.governorate === governorate && existing.address === address &&
             (existing.notes || "") === notes && existing.items_json === itemsJson &&
             Number(existing.total_egp) === total) {
-          return json({ ok: true, duplicate: true, id, total });
+          return json({ ok: true, duplicate: true, id, total, trackingToken: String(existing.tracking_token || "") });
         }
         return json({ ok: false, error: "order id conflict" }, 409);
       } catch { return json({ ok: false, error: "storage verification error" }, 500); }
     }
     return json({ ok: false, error: "storage error" }, 500);
   }
-  return json({ ok: true, id, total });
+  return json({ ok: true, id, total, trackingToken });
 };
