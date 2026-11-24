@@ -28,7 +28,7 @@ export const siteConfig = {
   },
 
   // Meta Pixel ID — للحصول عليه من Facebook Events Manager
-  metaPixelId: "1184874403972925",
+  metaPixelId: "1415519670660943",
 
   // حد الشحن المجاني بالجنيه
   freeShippingThreshold: 20000,
