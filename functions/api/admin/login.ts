@@ -9,7 +9,7 @@ interface Env {
 
 export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
   const ip = request.headers.get("cf-connecting-ip") || "unknown";
-  if (!(await rateLimit(env.DB, `login:${ip}`, 10, 600))) {
+  if (!(await rateLimit(env.DB, `login:${ip}`, 10, 600, true))) { // fail closed: brute-force protection must survive a D1 error
     return json({ ok: false, error: "too many attempts" }, 429);
   }
   let data: any;
@@ -17,6 +17,7 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
   const given = String((data && data.password) || "");
   const stored = String(env.ADMIN_PASSWORD_PBKDF2 || "");
   if (!stored) return json({ ok: false }, 500);
+  if (!env.SESSION_SECRET) return json({ ok: false }, 500); // refuse to issue forgeable cookies
   // Compare PBKDF2 derivations; the plaintext password is never stored anywhere.
   const match = await verifyPassword(given, stored);
   if (!match) return json({ ok: false, error: "wrong password" }, 403);

@@ -47,12 +47,14 @@ export function timingSafeEqualHex(a: string, b: string): boolean {
 }
 
 export async function makeSessionCookie(secret: string, maxAgeSec = 60 * 60 * 12): Promise<string> {
+  if (!secret) throw new Error("SESSION_SECRET missing"); // never sign with an empty/undefined key
   const exp = Math.floor(Date.now() / 1000) + maxAgeSec;
   const sig = await hmacHex(secret, `admin:${exp}`);
   return `admin_session=${exp}.${sig}; Path=/api/admin; HttpOnly; Secure; SameSite=Strict; Max-Age=${maxAgeSec}`;
 }
 
 export async function isAdmin(request: Request, secret: string): Promise<boolean> {
+  if (!secret) return false; // fail closed: a missing secret must never validate cookies
   const cookie = request.headers.get("cookie") || "";
   const m = cookie.match(/admin_session=(\d+)\.([0-9a-f]{64})/);
   if (!m) return false;
@@ -63,7 +65,9 @@ export async function isAdmin(request: Request, secret: string): Promise<boolean
 }
 
 // Naive fixed-window rate limit backed by D1: max `limit` hits per key per window.
-export async function rateLimit(DB: D1Database, key: string, limit: number, windowSec: number): Promise<boolean> {
+// failClosed=false keeps customer-facing flows available on a limiter error;
+// failClosed=true is for admin auth, where a limiter outage must not open the door.
+export async function rateLimit(DB: D1Database, key: string, limit: number, windowSec: number, failClosed = false): Promise<boolean> {
   const bucket = Math.floor(Date.now() / 1000 / windowSec);
   try {
     await DB.prepare(
@@ -74,6 +78,6 @@ export async function rateLimit(DB: D1Database, key: string, limit: number, wind
     ).bind(`${key}:${bucket}`).first();
     return Number(row && row.n) <= limit;
   } catch {
-    return true; // fail open: never block customers on a limiter error
+    return !failClosed;
   }
 }
