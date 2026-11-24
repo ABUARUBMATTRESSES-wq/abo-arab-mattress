@@ -123,3 +123,5 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
   }
   return json({ ok: true, id, total, trackingToken });
 };
+
+// Preview redeploy trigger: no behavior change. Exercises official Cloudflare Turnstile test keys in the Preview environment only.
