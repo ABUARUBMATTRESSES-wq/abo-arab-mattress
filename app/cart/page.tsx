@@ -48,6 +48,7 @@ export default function CartPage() {
     notes: "",
   });
   const [submitted, setSubmitted] = useState(false);
+  const [trackingCode, setTrackingCode] = useState("");
   const checkoutLockRef = useRef(false);
   const [turnstileToken, setTurnstileToken] = useState("");
   const [saving, setSaving] = useState(false);
@@ -106,6 +107,7 @@ export default function CartPage() {
     setOrderError("");
 
     let orderId = "";
+    let trackingToken = "";
 
     // The order must be stored server-side before the WhatsApp handoff.
     // On any failure we stop here: no success screen, no WhatsApp window.
@@ -139,6 +141,7 @@ export default function CartPage() {
         setOrderError("تعذّر تأكيد تسجيل الطلب، ولم يُفتح واتساب. أعد التحقق وحاول مرة أخرى، ولو المشكلة مستمرة تواصل معنا على واتساب.");
         return;
       }
+      trackingToken = typeof result.trackingToken === "string" ? result.trackingToken : "";
     } catch {
       (window as unknown as { turnstile?: { reset: () => void } }).turnstile?.reset();
       setTurnstileToken("");
@@ -150,6 +153,7 @@ export default function CartPage() {
     }
 
     // A confirmed success completes this attempt; a later intentional order gets a new id.
+    setTrackingCode(trackingToken);
     try { sessionStorage.removeItem("abo_arab_pending_order"); } catch { /* optional storage */ }
     saveLead({
       id: orderId,
@@ -183,7 +187,7 @@ export default function CartPage() {
       customer.phone
     }\nالمحافظة: ${customer.governorate}\nالعنوان: ${customer.address}${
       customer.notes ? `\nملاحظات: ${customer.notes}` : ""
-    }`;
+    }${trackingToken ? `\n\nكود التتبع: ${trackingToken}` : ""}`;
 
     // The database order is saved already; keep the cart if WhatsApp compose is abandoned.
     window.open(buildWhatsappLink(message), "_blank");
@@ -206,6 +210,16 @@ export default function CartPage() {
             <p className="mb-6 text-navy/60">
               فتحنا لك واتساب بتفاصيل الطلب. اضغط إرسال هناك عشان رسالتك توصلنا ونكمّل تأكيد الطلب. لو ما بعتّش الرسالة، الطلب يفضل مسجّل في الموقع، لكن رسالة واتساب مش هتوصلنا. وسلتك محفوظة وتقدر ترجعلها.
             </p>
+            {trackingCode && (
+              <div className="mb-6 rounded-xl border border-navy/15 bg-navy/5 p-4 text-right">
+                <p className="mb-1 font-extrabold text-navy">كود تتبع طلبك</p>
+                <p className="select-all break-all font-mono text-sm text-navy" dir="ltr">{trackingCode}</p>
+                <p className="mt-2 text-xs text-navy/60">
+                  احتفظ بالكود ده — تقدر تتابع بيه حالة طلبك في أي وقت من{" "}
+                  <Link href="/track" className="font-bold underline">صفحة تتبع الطلب</Link>.
+                </p>
+              </div>
+            )}
             <div className="flex flex-col gap-3">
               <Link href="/shop" className="btn-primary w-full">
                 متابعة التسوق
