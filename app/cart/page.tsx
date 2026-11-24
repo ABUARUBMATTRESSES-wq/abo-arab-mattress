@@ -10,6 +10,7 @@ import { useCart } from "@/context/CartContext";
 import { siteConfig, governorates, buildWhatsappLink } from "@/lib/config";
 import { formatPrice } from "@/lib/products";
 import { trackEvent } from "@/lib/pixel";
+import { CATALOG_IDS } from "@/lib/catalog-ids";
 import { saveLead } from "@/lib/leads";
 import { CustomerInfo } from "@/lib/types";
 import { calculateShipping, isCairoOrGiza } from "@/lib/shipping";
@@ -168,7 +169,7 @@ export default function CartPage() {
     trackEvent("Lead", {
       value: total,
       currency: "EGP",
-      content_ids: items.map((i) => i.productId),
+      content_ids: items.map((i) => CATALOG_IDS[i.slug]?.v[`${i.sizeId}|${i.heightId}`] ?? i.productId),
       num_items: items.reduce((s, i) => s + i.quantity, 0),
     });
 
