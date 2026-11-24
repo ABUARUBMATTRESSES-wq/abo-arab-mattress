@@ -38,6 +38,7 @@ export async function verifyPassword(given: string, stored: string): Promise<boo
   return timingSafeEqualHex(derived, m[3]);
 }
 
+// Preview redeploy marker 2026-11-24: env refresh; PBKDF2 iterations kept within Workers runtime limits.
 export function timingSafeEqualHex(a: string, b: string): boolean {
   if (a.length !== b.length) return false;
   let diff = 0;
