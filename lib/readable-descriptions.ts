@@ -783,12 +783,7 @@ export const readableDescriptions: Record<string, { intro: string; points: strin
       "الغطاء: قماش قطني بسحاب."
     ]
   },
-  "pillow-protector-40-x-60-cm": {
-    "intro": "الغطاء: قماش أبيض مبطن.",
-    "points": [
-      "الاستخدام: غطاء واقٍ للمخدة."
-    ]
-  },
+
   "pillow-relax": {
     "intro": "الحشو: إسفنج سوبر سوفت مع فايبر رول.",
     "points": [
