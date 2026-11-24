@@ -8,7 +8,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { useCart } from "@/context/CartContext";
 import { siteConfig, governorates, buildWhatsappLink } from "@/lib/config";
-import { formatPrice } from "@/lib/products";
+import { formatPrice, getProductBySlug } from "@/lib/products";
 import { trackEvent } from "@/lib/pixel";
 import { CATALOG_IDS } from "@/lib/catalog-ids";
 import { saveLead } from "@/lib/leads";
@@ -169,7 +169,18 @@ export default function CartPage() {
     trackEvent("Lead", {
       value: total,
       currency: "EGP",
-      content_ids: items.map((i) => CATALOG_IDS[i.slug]?.v[`${i.sizeId}|${i.heightId}`] ?? i.productId),
+      content_ids: items.map((i) => {
+        const entry = CATALOG_IDS[i.slug];
+        if (!entry) return i.productId;
+        let key = `${i.sizeId}|${i.heightId}`;
+        if (!i.sizeId || !i.heightId) {
+          const p = getProductBySlug(i.slug);
+          const s = p?.sizes.find((sz) => sz.label === i.sizeLabel);
+          const h = p?.heights.find((ht) => ht.label === i.heightLabel);
+          key = `${s?.id ?? ""}|${h?.id ?? ""}`;
+        }
+        return entry.v[key] ?? i.productId;
+      }),
       num_items: items.reduce((s, i) => s + i.quantity, 0),
     });
 
@@ -427,4 +438,4 @@ export default function CartPage() {
       <Footer />
     </>
   );
-}
+                  }
