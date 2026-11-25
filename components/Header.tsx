@@ -91,7 +91,7 @@ export default function Header() {
                 placeholder="دور على مرتبة، مخدة، واقي مرتبة..."
                 className="w-full rounded-xl border border-navy/15 px-4 py-2.5 text-sm outline-none focus:border-gold"
               />
-              <button type="submit" aria-label="ابحث" className="btn-gold !px-4 !py-2.5">
+              <button type="submit" aria-label="ابحث" className="btn-gold !px-4 !py-2.5 min-h-[44px]">
                 <Search size={18} />
               </button>
             </form>
