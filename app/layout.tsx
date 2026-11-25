@@ -43,7 +43,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           rel="stylesheet"
         />
       </head>
-      <body className="font-cairo antialiased">
+      <body className="pb-14 font-cairo antialiased md:pb-0">
         <MetaPixelScript />
         <CartProvider>
           {children}
