@@ -23,6 +23,8 @@ export default function ShopPageClient() {
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
   const [sortOrder, setSortOrder] = useState<"default" | "asc" | "desc">("default");
 
+  const [hydrated, setHydrated] = useState(false);
+
   useEffect(() => {
     const category = searchParams.get("category");
     const brand = searchParams.get("brand");
@@ -40,11 +42,54 @@ export default function ShopPageClient() {
     if (construction) {
       setFilters((prev) => ({ ...prev, construction: construction as ConstructionClass }));
     }
+    // حالة التصفح محفوظة في الرابط، فالرجوع من صفحة المنتج يرجّع نفس الفلاتر. القيم تتحقق من وجودها في المنتجات.
+    const spring = searchParams.get("spring");
+    if (spring && products.some((p) => p.springType === spring)) {
+      setFilters((prev) => ({ ...prev, springType: spring as FilterState["springType"] }));
+    }
+    const firm = searchParams.get("firmness");
+    if (firm && products.some((p) => p.firmness === firm)) {
+      setFilters((prev) => ({ ...prev, firmness: firm as FilterState["firmness"] }));
+    }
+    const height = searchParams.get("height");
+    if (height && products.some((p) => p.variantPrices.some((v) => v.heightId === height))) {
+      setFilters((prev) => ({ ...prev, heightId: height }));
+    }
+    const size = searchParams.get("size");
+    if (size && products.some((p) => p.variantPrices.some((v) => v.sizeId === size))) {
+      setFilters((prev) => ({ ...prev, sizeId: size }));
+    }
+    const sort = searchParams.get("sort");
+    if (sort === "asc" || sort === "desc") setSortOrder(sort);
     if (compareParam === "1") setCompareMode(true);
     if (idsParam) setCompareIds(idsParam.split(",").filter(Boolean).slice(0, 3));
     if (q) setSearchTerm(q);
+    setHydrated(true);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchParams]);
+
+  // كتابة الفلاتر والترتيب في الرابط (بدون إضافة خطوة في سجل المتصفح)
+  useEffect(() => {
+    if (!hydrated) return;
+    const params = new URLSearchParams(window.location.search);
+    const setOrDelete = (key: string, value: string, empty: string) => {
+      if (value && value !== empty) params.set(key, value);
+      else params.delete(key);
+    };
+    setOrDelete("category", filters.category, "all");
+    setOrDelete("brand", filters.brand, "all");
+    setOrDelete("construction", filters.construction, "all");
+    setOrDelete("spring", filters.springType, "all");
+    setOrDelete("firmness", filters.firmness, "all");
+    setOrDelete("height", filters.heightId, "all");
+    setOrDelete("size", filters.sizeId, "all");
+    setOrDelete("sort", sortOrder, "default");
+    const qs = params.toString();
+    const next = window.location.pathname + (qs ? "?" + qs : "") + window.location.hash;
+    if (next !== window.location.pathname + window.location.search + window.location.hash) {
+      window.history.replaceState(window.history.state, "", next);
+    }
+  }, [filters, sortOrder, hydrated]);
 
   const filteredProducts = useMemo(() => {
     return products.filter((p) => {
