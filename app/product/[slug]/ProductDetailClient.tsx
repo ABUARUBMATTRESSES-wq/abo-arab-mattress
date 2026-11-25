@@ -118,19 +118,19 @@ export default function ProductDetailClient({ product }: { product: Product }) {
       <main className="container-app py-10">
         <div className="grid gap-10 lg:grid-cols-2">
           {/* معرض الصور */}
-          <div>
+          <div className="min-w-0">
             <div className="card mb-3 aspect-square overflow-hidden">
               <img src={productImageAtWidth(product.images[activeImage], 960)} srcSet={productImageSrcSet(product.images[activeImage])} sizes="(min-width: 1024px) 560px, 100vw" decoding="async" fetchPriority="high" alt={product.name} className="h-full w-full object-cover" />
             </div>
             {product.images.length > 1 && (
-              <div className="flex gap-2">
+              <div className="flex gap-2 overflow-x-auto">
                 {product.images.map((img, i) => (
                   <button
                     type="button"
                     aria-label={`صورة ${i + 1} لمنتج ${product.name}`}
                     key={img}
                     onClick={() => setActiveImage(i)}
-                    className={`h-16 w-16 overflow-hidden rounded-lg border-2 ${
+                    className={`h-16 w-16 shrink-0 overflow-hidden rounded-lg border-2 ${
                       activeImage === i ? "border-gold" : "border-transparent"
                     }`}
                   >
