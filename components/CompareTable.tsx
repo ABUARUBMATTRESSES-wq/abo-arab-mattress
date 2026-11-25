@@ -31,7 +31,7 @@ export default function CompareTable({ items }: { items: Product[] }) {
       <table className="w-full min-w-[600px] border-collapse text-sm">
         <thead>
           <tr className="bg-navy text-white">
-            <th className="p-4 text-right font-bold">المواصفات</th>
+            <th className="sticky right-0 z-10 bg-navy p-4 text-right font-bold">المواصفات</th>
             {items.map((p) => (
               <th key={p.id} className="p-4 text-right">
                 <div className="flex flex-col items-start gap-2">
@@ -45,7 +45,7 @@ export default function CompareTable({ items }: { items: Product[] }) {
         <tbody>
           {visibleRows.map((row, idx) => (
             <tr key={row.label} className={idx % 2 === 0 ? "bg-white" : "bg-paper"}>
-              <td className="p-4 font-bold text-navy/70">{row.label}</td>
+              <td className="sticky right-0 z-10 bg-inherit p-4 font-bold text-navy/70">{row.label}</td>
               {items.map((p) => (
                 <td key={p.id} className="p-4 text-navy">
                   {row.render(p)}
