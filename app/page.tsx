@@ -20,7 +20,6 @@ const localBusinessJsonLd = {
   "@type": "LocalBusiness",
   name: siteConfig.brandNameAr,
   url: "https://abo-arab-mattress.pages.dev",
-  telephone: "+2" + siteConfig.phoneDisplay,
   address: { "@type": "PostalAddress", streetAddress: siteConfig.address, addressCountry: "EG" },
   hasMap: siteConfig.mapsUrl,
   openingHoursSpecification: [
