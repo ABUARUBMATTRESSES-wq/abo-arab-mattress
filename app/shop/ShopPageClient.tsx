@@ -133,7 +133,7 @@ export default function ShopPageClient() {
         </div>
 
         <div className="grid gap-6 lg:grid-cols-[260px_1fr]">
-          <ShopFilters filters={filters} onChange={setFilters} />
+          <ShopFilters filters={filters} onChange={setFilters} resultCount={filteredProducts.length} />
 
           <div>
             {filteredProducts.length === 0 ? (
