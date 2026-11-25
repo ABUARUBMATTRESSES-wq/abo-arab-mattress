@@ -310,7 +310,7 @@ export default function ProductDetailClient({ product }: { product: Product }) {
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {cheaperAlternatives.map((alt) => (
                 <div key={alt.product.id} className="card flex flex-col overflow-hidden">
-                  <Link href={`/product/${alt.product.slug}?size=${sizeId}&height=${heightId}`} className="relative block aspect-[4/3] overflow-hidden bg-navy/5">
+                  <Link href={`/product/${alt.product.slug}?size=${sizeId}&height=${heightId}`} className="relative block aspect-square overflow-hidden bg-navy/5">
                     <img
                       src={productImageAtWidth(alt.product.images[0], 640)}
                       srcSet={productImageSrcSet(alt.product.images[0])}
