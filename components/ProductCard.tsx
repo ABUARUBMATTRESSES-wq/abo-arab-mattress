@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Star, Scale, Sparkles } from "lucide-react";
 import { Product } from "@/lib/types";
 import { getDefaultVariant } from "@/lib/products";
+import { getCardSummary } from "@/lib/card-summary";
 import PriceTag from "./PriceTag";
 import { productImageAtWidth, productImageSrcSet } from "@/lib/product-images";
 
@@ -21,6 +22,8 @@ export default function ProductCard({
   eager?: boolean;
 }) {
   const defaultVariant = getDefaultVariant(product);
+  // ملخص الكارت من readable-description الخاص بالمنتج نفسه، بدون اختراع مواصفات.
+  const cardSummary = getCardSummary(product);
 
   return (
     <div className="card group relative flex flex-col overflow-hidden transition hover:-translate-y-1 hover:border-gold">
@@ -63,10 +66,9 @@ export default function ProductCard({
         <Link href={`/product/${product.slug}`}>
           <h2 className="font-extrabold text-navy line-clamp-2 leading-6">{product.name}</h2>
         </Link>
-        {product.shortDescription !== product.name && (
-          <p className="line-clamp-2 text-sm text-navy/60">{product.shortDescription}</p>
+        {cardSummary && cardSummary !== product.name && (
+          <p className="line-clamp-2 text-sm text-navy/60">{cardSummary}</p>
         )}
-
         {product.reviewsCount > 0 && (
           <div className="mt-1 flex items-center gap-1 text-xs text-navy/60">
             <Star size={14} className="fill-gold text-gold" />
@@ -74,13 +76,11 @@ export default function ProductCard({
             <span>({product.reviewsCount} تقييم)</span>
           </div>
         )}
-
         {defaultVariant && (
           <div className="mt-auto pt-3">
             <PriceTag price={defaultVariant.price} originalPrice={defaultVariant.originalPrice} />
           </div>
         )}
-
         <Link href={`/product/${product.slug}`} className="btn-primary mt-3 w-full !py-2.5 !px-2 text-sm whitespace-nowrap">
           عرض التفاصيل
         </Link>

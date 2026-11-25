@@ -4,6 +4,14 @@ import { useState } from "react";
 import { ChevronDown } from "lucide-react";
 import { faqs } from "@/lib/products";
 
+const faqsWithCustomSizes = [
+  {
+    question: "بتنفذوا مقاسات خاصة؟",
+    answer: "أيوه، بننفّذ مقاسات خاصة حسب الطلب. تواصل معانا على واتساب وهنوضحلك التفاصيل",
+  },
+  ...faqs,
+];
+
 export default function FaqSection() {
   const [openIndex, setOpenIndex] = useState<number | null>(0);
 
@@ -15,7 +23,7 @@ export default function FaqSection() {
           <p className="mt-2 text-navy/60">إجابات على أكتر الأسئلة اللي بتوصلنا</p>
         </div>
         <div className="space-y-3">
-          {faqs.map((faq, index) => {
+          {faqsWithCustomSizes.map((faq, index) => {
             const isOpen = openIndex === index;
             return (
               <div key={faq.question} className="card overflow-hidden">

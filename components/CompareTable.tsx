@@ -22,6 +22,10 @@ export default function CompareTable({ items }: { items: Product[] }) {
     { label: "الارتفاعات المتاحة", render: (p) => p.heights.map((h) => h.label).join(" / ") },
   ];
 
+  // Hide a row that would be empty for every compared product.
+  const hasFirmness = items.some((p) => Boolean(p.firmness));
+  const visibleRows = hasFirmness ? rows : rows.filter((row) => row.label !== "درجة الصلابة");
+
   return (
     <div id="compare-table" className="overflow-x-auto rounded-2xl border border-navy/10">
       <table className="w-full min-w-[600px] border-collapse text-sm">
@@ -39,7 +43,7 @@ export default function CompareTable({ items }: { items: Product[] }) {
           </tr>
         </thead>
         <tbody>
-          {rows.map((row, idx) => (
+          {visibleRows.map((row, idx) => (
             <tr key={row.label} className={idx % 2 === 0 ? "bg-white" : "bg-paper"}>
               <td className="p-4 font-bold text-navy/70">{row.label}</td>
               {items.map((p) => (

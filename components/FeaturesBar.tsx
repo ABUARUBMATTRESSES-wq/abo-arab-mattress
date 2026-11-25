@@ -1,14 +1,15 @@
-import { ShieldCheck, Truck, RefreshCw } from "lucide-react";
+import Link from "next/link";
+import { ShieldCheck, Truck, RefreshCw, type LucideIcon } from "lucide-react";
 import { siteConfig } from "@/lib/config";
 
-const features = [
+const features: { icon: LucideIcon; title: string; desc: string; href?: string }[] = [
   { icon: ShieldCheck, title: "الضمان", desc: "تفاصيل الضمان في صفحة كل منتج" },
   {
     icon: Truck,
     title: "الشحن",
     desc: `مجاني للقاهرة والجيزة للطلبات من ${siteConfig.freeShippingThreshold.toLocaleString("ar-EG")} ${siteConfig.currency}`,
   },
-  { icon: RefreshCw, title: "الاستبدال", desc: "حسب سياسة الاستبدال والاسترجاع" },
+  { icon: RefreshCw, title: "الاستبدال", desc: "حسب سياسة الاستبدال والاسترجاع", href: "/returns-policy" },
 ];
 
 export default function FeaturesBar() {
@@ -22,7 +23,17 @@ export default function FeaturesBar() {
             </span>
             <div>
               <p className="text-sm font-extrabold text-navy">{f.title}</p>
-              {f.desc && <p className="text-xs text-navy/60">{f.desc}</p>}
+              {f.desc &&
+                (f.href ? (
+                  <Link
+                    href={f.href}
+                    className="text-xs font-bold text-navy/70 underline decoration-gold decoration-2 underline-offset-2 hover:text-gold-dark"
+                  >
+                    {f.desc}
+                  </Link>
+                ) : (
+                  <p className="text-xs text-navy/60">{f.desc}</p>
+                ))}
             </div>
           </div>
         ))}
