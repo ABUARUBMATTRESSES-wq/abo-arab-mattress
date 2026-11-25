@@ -174,7 +174,7 @@ export default function ShopFilters({
                 <X size={22} />
               </button>
             </div>
-            {content}
+            <div className="shrink-0 pb-16">{content}</div>
             <div className="sticky bottom-14 -mx-5 mt-5 bg-white px-5 pb-2 pt-3">
               <button onClick={() => setMobileOpen(false)} className="btn-gold w-full">
                 عرض النتائج{typeof resultCount === "number" ? ` (${resultCount.toLocaleString("ar-EG")})` : ""}
