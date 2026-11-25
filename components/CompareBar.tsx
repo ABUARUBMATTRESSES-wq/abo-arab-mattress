@@ -34,7 +34,7 @@ export default function CompareBar({
   return (
     <>
     <div aria-hidden="true" style={{ height: "var(--compare-bar-height, 112px)" }} />
-    <div ref={barRef} className="fixed inset-x-0 bottom-0 z-40 border-t border-navy/10 bg-white/95 shadow-luxury backdrop-blur">
+    <div ref={barRef} className="fixed inset-x-0 bottom-14 z-40 border-t border-navy/10 md:bottom-0 bg-white/95 shadow-luxury backdrop-blur">
       <div className="container-app flex flex-wrap items-center justify-between gap-3 py-3">
         <div className="flex min-w-0 max-w-full items-center gap-2 overflow-x-auto">
           <span className="flex items-center gap-1 whitespace-nowrap font-extrabold text-navy">

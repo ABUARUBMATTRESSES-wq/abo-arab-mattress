@@ -305,7 +305,7 @@ export default function CartPage() {
                         </Link>
                         <button
                           onClick={() => removeItem(item.productId, item.sizeLabel, item.heightLabel)}
-                          className="text-navy/40 hover:text-red-500"
+                          className="-m-3 inline-flex h-11 w-11 items-center justify-center text-navy/40 hover:text-red-500"
                           aria-label="حذف"
                         >
                           <Trash2 size={18} />
@@ -320,7 +320,8 @@ export default function CartPage() {
                             onClick={() =>
                               updateQuantity(item.productId, item.sizeLabel, item.heightLabel, item.quantity - 1)
                             }
-                            className="px-3 py-1.5 text-navy hover:bg-navy/5"
+                            aria-label={`تقليل كمية ${item.productName}`}
+                            className="flex h-11 w-11 items-center justify-center text-navy hover:bg-navy/5"
                           >
                             <Minus size={14} />
                           </button>
@@ -329,7 +330,8 @@ export default function CartPage() {
                             onClick={() =>
                               updateQuantity(item.productId, item.sizeLabel, item.heightLabel, item.quantity + 1)
                             }
-                            className="px-3 py-1.5 text-navy hover:bg-navy/5"
+                            aria-label={`زيادة كمية ${item.productName}`}
+                            className="flex h-11 w-11 items-center justify-center text-navy hover:bg-navy/5"
                           >
                             <Plus size={14} />
                           </button>
@@ -376,13 +378,18 @@ export default function CartPage() {
 
               <div className="card space-y-3 p-5">
                 <h2 className="font-extrabold text-navy">بيانات التوصيل</h2>
+                <label htmlFor="customer-name" className="sr-only">الاسم بالكامل</label>
                 <input
+                  id="customer-name"
+                  autoComplete="name"
                   value={customer.name}
                   onChange={(e) => setCustomer((c) => ({ ...c, name: e.target.value }))}
                   placeholder="الاسم بالكامل"
                   className="w-full rounded-xl border border-navy/15 px-3 py-2.5 text-sm outline-none focus:border-gold"
                 />
+                <label htmlFor="customer-phone" className="sr-only">رقم الهاتف</label>
                 <input
+                  id="customer-phone"
                   value={customer.phone}
                   onChange={(e) => setCustomer((c) => ({ ...c, phone: e.target.value }))}
                   placeholder="رقم الهاتف"
@@ -398,7 +405,9 @@ export default function CartPage() {
                 <p id="phone-help" role={showPhoneError ? "alert" : undefined} className={`text-xs leading-6 ${showPhoneError ? "text-red-600" : "text-navy/50"}`}>
                   {showPhoneError ? "رقم الهاتف غير صالح. اكتب رقمًا مصريًا صحيحًا أو رقمًا دوليًا يبدأ بـ + أو 00." : "مثال: 01012345678 أو +201012345678. الأرقام العربية مقبولة."}
                 </p>
+                <label htmlFor="customer-governorate" className="sr-only">المحافظة</label>
                 <select
+                  id="customer-governorate"
                   value={customer.governorate}
                   onChange={(e) => setCustomer((c) => ({ ...c, governorate: e.target.value }))}
                   className="w-full rounded-xl border border-navy/15 px-3 py-2.5 text-sm outline-none focus:border-gold"
@@ -409,14 +418,19 @@ export default function CartPage() {
                     </option>
                   ))}
                 </select>
+                <label htmlFor="customer-address" className="sr-only">العنوان بالتفصيل</label>
                 <textarea
+                  id="customer-address"
+                  autoComplete="street-address"
                   value={customer.address}
                   onChange={(e) => setCustomer((c) => ({ ...c, address: e.target.value }))}
                   placeholder="العنوان بالتفصيل (الحي، الشارع، رقم العقار...)"
                   rows={3}
                   className="w-full rounded-xl border border-navy/15 px-3 py-2.5 text-sm outline-none focus:border-gold"
                 />
+                <label htmlFor="customer-notes" className="sr-only">ملاحظات إضافية (اختياري)</label>
                 <textarea
+                  id="customer-notes"
                   value={customer.notes}
                   onChange={(e) => setCustomer((c) => ({ ...c, notes: e.target.value }))}
                   placeholder="ملاحظات إضافية (اختياري)"
