@@ -29,9 +29,11 @@ export const defaultFilters: FilterState = {
 export default function ShopFilters({
   filters,
   onChange,
+  resultCount,
 }: {
   filters: FilterState;
   onChange: (filters: FilterState) => void;
+  resultCount?: number;
 }) {
   const [mobileOpen, setMobileOpen] = useState(false);
 
@@ -165,17 +167,19 @@ export default function ShopFilters({
       {mobileOpen && (
         <div className="fixed inset-0 z-50 flex lg:hidden">
           <div className="absolute inset-0 bg-navy/40" onClick={() => setMobileOpen(false)} />
-          <div className="relative mr-auto flex h-full w-[85%] max-w-sm flex-col overflow-y-auto bg-white p-5">
-            <div className="mb-4 flex items-center justify-between">
+          <div className="relative mr-auto flex h-full w-[85%] max-w-sm flex-col overflow-y-auto bg-white p-5 pb-16">
+            <div className="sticky top-0 z-10 -mx-5 -mt-5 mb-4 flex items-center justify-between border-b border-navy/10 bg-white px-5 py-4">
               <p className="font-extrabold text-navy">الفلاتر</p>
               <button onClick={() => setMobileOpen(false)} aria-label="إغلاق">
                 <X size={22} />
               </button>
             </div>
             {content}
-            <button onClick={() => setMobileOpen(false)} className="btn-gold mt-5 w-full">
-              عرض النتائج
-            </button>
+            <div className="sticky bottom-14 -mx-5 mt-5 bg-white px-5 pb-2 pt-3">
+              <button onClick={() => setMobileOpen(false)} className="btn-gold w-full">
+                عرض النتائج{typeof resultCount === "number" ? ` (${resultCount.toLocaleString("ar-EG")})` : ""}
+              </button>
+            </div>
           </div>
         </div>
       )}
