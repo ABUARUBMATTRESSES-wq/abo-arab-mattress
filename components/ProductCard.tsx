@@ -27,7 +27,7 @@ export default function ProductCard({
 
   return (
     <div className="card group relative flex flex-col overflow-hidden transition hover:-translate-y-1 hover:border-gold">
-      <Link href={`/product/${product.slug}`} className="relative block aspect-[4/3] overflow-hidden bg-navy/5">
+      <Link href={`/product/${product.slug}`} className="relative block aspect-square overflow-hidden bg-navy/5">
         <img
           src={productImageAtWidth(product.images[0], 640)}
           srcSet={productImageSrcSet(product.images[0])}
