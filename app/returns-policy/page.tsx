@@ -6,6 +6,7 @@ import { buildWhatsappLink } from "@/lib/config";
 export const metadata: Metadata = {
   title: "سياسة الاستبدال والاسترجاع",
   description: "سياسة الاستبدال والاسترجاع في أبو عرب للمراتب والمفروشات وفقًا لقانون حماية المستهلك.",
+  alternates: { canonical: "/returns-policy" },
 };
 
 export default function ReturnsPolicyPage() {
