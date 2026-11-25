@@ -35,7 +35,7 @@ export default function CompareTable({ items }: { items: Product[] }) {
             {items.map((p) => (
               <th key={p.id} className="p-4 text-right">
                 <div className="flex flex-col items-start gap-2">
-                  <img src={p.images[0]} alt={p.name} className="h-16 w-20 rounded-lg object-cover" />
+                  <img src={p.images[0]} alt={p.name} className="h-16 w-16 rounded-lg object-cover" />
                   <span className="font-extrabold">{p.name}</span>
                 </div>
               </th>
