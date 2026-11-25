@@ -30,7 +30,6 @@ export default function MetaPixelScript() {
         t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script',
         'https://connect.facebook.net/en_US/fbevents.js');
         fbq('init', '${siteConfig.metaPixelId}');
-        fbq('track', 'PageView');
       `}
     </Script>
   );
