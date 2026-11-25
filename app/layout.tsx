@@ -4,9 +4,10 @@ import { CartProvider } from "@/context/CartContext";
 import WhatsappFloatButton from "@/components/WhatsappFloatButton";
 import MetaPixelScript from "@/components/MetaPixelScript";
 import { siteConfig } from "@/lib/config";
+import { Cairo } from "next/font/google";
 
-// ملاحظة: بنحمّل خط Cairo عن طريق رابط Google Fonts مباشرة بدل next/font
-// عشان نضمن نجاح البناء (build) حتى في بيئات بدون اتصال وقت الـ build.
+// خط Cairo بيتحمّل من next/font وقت الـ build ويتخدم من نفس الموقع (بدون طلب خارجي بيعطّل العرض).
+const cairo = Cairo({ subsets: ["arabic", "latin"], display: "swap", variable: "--font-cairo-nf" });
 const SITE_URL = "https://abo-arab-mattress.pages.dev";
 const SITE_DESCRIPTION = "تصفح المراتب والمخدات والخداديات وواقي المرتبة وطبقات التطرية من أبو عرب.";
 
@@ -34,15 +35,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="ar" dir="rtl">
-      <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&family=Tajawal:wght@400;500;700;900&display=swap"
-          rel="stylesheet"
-        />
-      </head>
+    <html lang="ar" dir="rtl" className={cairo.variable}>
       <body className="pb-14 font-cairo antialiased md:pb-0">
         <MetaPixelScript />
         <CartProvider>
