@@ -15,6 +15,9 @@ const summaryOverrides: Record<string, string> = {
 const MAX_SUMMARY_LENGTH = 160;
 const MAX_CLAUSE_LENGTH = 95;
 
+// وصف أصلي مفيد بيتساب زي ما هو، من غير إعادة تركيب.
+const KEEP_INTRO_MIN_LENGTH = 55;
+
 type Fact = { label: string; value: string; order: number };
 
 // عبارة عامة مش مواصفة: تتشال عشان الملخص يبدأ بمعلومة حقيقية.
@@ -23,7 +26,20 @@ const POINTER = /(المواصفات الموضحة أدناه|المواصفا�
 // طبقات ومكونات هي اللي بتفرّق بين الموديلات المتشابهة.
 const SIGNATURE = /(ميموري|لاتكس|بيلوتوب|بيلو توب|قطن|ريبوند|فازلين|جاكار|فيسكو|سوفت)/;
 
+// الفرق ده لو مش مذكور في الوصف، الوصف مايتسابش لوحده عشان المعلومة ما تضيعش.
+const DIFFERENTIATOR = /(ميموري|لاتكس|بيلوتوب|بيلو توب)/;
+
 const SPRING = /سوست/;
+
+// «بارتفاع 16 سم» في وصف السوست مش ارتفاع المرتبة، فبيتوضّح دايمًا.
+const BARE_SPRING_HEIGHT = /[,،]?\s*بارتفاع\s*([\d.]+)\s*سم/g;
+
+function clarifySpringHeight(text: string): string {
+  return text
+    .replace(BARE_SPRING_HEIGHT, (_match, cm: string) => `، ارتفاع السوست ${cm} سم`)
+    .replace(/^[،,]\s*/, "")
+    .trim();
+}
 
 function clean(text: string): string {
   return text.trim().replace(/\s*\.\s*$/, "").trim();
@@ -62,7 +78,7 @@ function heightClause(value: string): string {
   return `ارتفاع ${numbers.join(" أو ")}${unit}`;
 }
 
-function clause(fact: Fact): string {
+function rawClause(fact: Fact): string {
   const { label, value } = fact;
   if (label.includes("أقصى ارتفاع")) return `يناسب ارتفاع حتى ${value}`;
   if (label.includes("ارتفاع")) return heightClause(value);
@@ -85,6 +101,10 @@ function clause(fact: Fact): string {
   if (label.includes("الطبقة العلوية")) return withWord("طبقة", value);
   if (label.includes("الموديل")) return withWord("موديل", value);
   return value;
+}
+
+function clause(fact: Fact): string {
+  return clarifySpringHeight(rawClause(fact));
 }
 
 function priority(fact: Fact): number {
@@ -118,6 +138,15 @@ function isMattressHeight(fact: Fact): boolean {
   return fact.label.includes("ارتفاع") && !fact.label.includes("أقصى");
 }
 
+// الوصف الأصلي بيتساب زي ما هو لو جملة كاملة مفيدة، ومفيش فرق موثّق بيضيع منه.
+function isUsefulIntro(intro: string, facts: Fact[]): boolean {
+  if (!intro || POINTER.test(intro)) return false;
+  const colon = intro.indexOf(":");
+  if (colon > 0 && colon <= 30) return false;
+  if (intro.length < KEEP_INTRO_MIN_LENGTH) return false;
+  return !facts.some((fact) => DIFFERENTIATOR.test(fact.value) && !intro.includes(fact.value));
+}
+
 export function getCardSummary(product: Product): string {
   const override = summaryOverrides[product.id] ?? summaryOverrides[product.slug];
   if (override) return override;
@@ -126,14 +155,14 @@ export function getCardSummary(product: Product): string {
   const facts = toFacts(readable?.points ?? []);
   const heightFact = facts.find(isMattressHeight);
 
-  let intro = readable?.intro ? clean(readable.intro) : "";
+  const originalIntro = readable?.intro ? clean(readable.intro) : "";
+
+  // الوصف المفيد بيفضل زي ما هو بالحرف، مع توضيح ارتفاع السوست لو مذكور فيه.
+  if (isUsefulIntro(originalIntro, facts)) return clarifySpringHeight(originalIntro);
+
+  let intro = originalIntro;
   // وصف عام بيحيل للمواصفات اللي تحت، أو اسم موديل لوحده: مش ملخص.
   if (POINTER.test(intro) || (intro.length < 15 && !intro.includes(" "))) intro = "";
-
-  // «بارتفاع 16 سم» في وصف السوست مش ارتفاع المرتبة، فبتتوضّح عشان مفيش رقمين متناقضين.
-  if (heightFact && intro) {
-    intro = intro.replace(/بارتفاع\s*([\d.]+)\s*سم/, (_match, cm: string) => `بارتفاع سوست ${cm} سم`);
-  }
 
   const introFact = intro ? toFacts([intro])[0] : undefined;
   const introText = introFact ? clause(introFact) : "";
@@ -162,7 +191,7 @@ export function getCardSummary(product: Product): string {
     added += 1;
   }
 
-  const summary = body.join("، ").trim();
+  const summary = clarifySpringHeight(body.join("، ").trim());
   if (summary) return summary;
 
   const fallback = clean(product.shortDescription ?? "");
