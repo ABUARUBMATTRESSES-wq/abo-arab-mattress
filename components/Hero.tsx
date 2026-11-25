@@ -49,7 +49,7 @@ export default function Hero() {
           <div className="absolute inset-0 rounded-[2.5rem] bg-gold-gradient opacity-20 blur-3xl" />
           <div className="relative flex h-full items-center justify-center rounded-[2.5rem] border border-white/10 bg-white/5 p-6 backdrop-blur">
             <img
-              src="/img/1-hero-bedroom.webp"
+              src="/img/5-hero-bedroom.webp"
               alt="غرفة نوم"
               width={900}
               height={600}
