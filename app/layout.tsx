@@ -18,7 +18,6 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "ar_EG",
-    url: SITE_URL,
     siteName: siteConfig.brandNameAr,
     title: `${siteConfig.brandNameAr} | Abo Arab Mattress`,
     description: SITE_DESCRIPTION,

@@ -3,6 +3,8 @@ import ShopPageClient from "./ShopPageClient";
 
 export const metadata = {
   title: "المتجر | مراتب و مفروشات أبو عرب",
+  description: "تصفح كل المراتب والمخدات وواقي المرتبة وطبقات التطرية في أبو عرب، وفلتر بالماركة والمقاس.",
+  alternates: { canonical: "/shop" },
 };
 
 function ShopSkeleton() {

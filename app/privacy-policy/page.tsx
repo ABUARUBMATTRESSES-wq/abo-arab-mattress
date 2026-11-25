@@ -2,7 +2,11 @@ import type { Metadata } from "next";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 
-export const metadata: Metadata = { title: "سياسة الخصوصية" };
+export const metadata: Metadata = {
+  title: "سياسة الخصوصية",
+  description: "كيف يستخدم موقع أبو عرب بيانات الطلب (الاسم والهاتف والمحافظة والعنوان) عند الطلب عبر الموقع وواتساب.",
+  alternates: { canonical: "/privacy-policy" },
+};
 
 export default function PrivacyPolicyPage() {
   return <>
