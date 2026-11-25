@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 :root {
-  --font-cairo: "Cairo", "Tajawal", sans-serif;
+  --font-cairo: var(--font-cairo-nf), "Cairo", "Tajawal", sans-serif;
 }
 
 html {
