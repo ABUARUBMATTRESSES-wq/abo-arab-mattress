@@ -16,7 +16,7 @@ function ShopSkeleton() {
         <div className="hidden h-96 rounded-2xl bg-navy/5 lg:block" />
         <div className="grid grid-cols-2 gap-4 lg:grid-cols-3">
           {Array.from({ length: 6 }, (_, i) => <div key={i} className="card overflow-hidden">
-            <div className="aspect-[4/3] bg-navy/10" />
+            <div className="aspect-square bg-navy/10" />
             <div className="space-y-3 p-4"><div className="h-5 w-4/5 rounded bg-navy/10" /><div className="h-4 w-2/3 rounded bg-navy/5" /><div className="h-5 w-1/2 rounded bg-navy/10" /></div>
           </div>)}
         </div>
