@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import { getProductBySlug, products } from "@/lib/products";
+import { getCardSummary } from "@/lib/card-summary";
 import ProductDetailClient from "./ProductDetailClient";
 
 export function generateStaticParams() {
@@ -9,9 +10,12 @@ export function generateStaticParams() {
 export function generateMetadata({ params }: { params: { slug: string } }) {
   const product = getProductBySlug(params.slug);
   if (!product) return {};
+  const summary = getCardSummary(product);
+  const description = summary && summary !== product.name ? summary : product.shortDescription;
   return {
     title: `${product.name} | مراتب و مفروشات أبو عرب`,
-    description: product.shortDescription,
+    description,
+    alternates: { canonical: `/product/${product.slug}` },
     openGraph: {
       title: product.name,
       description: product.shortDescription,
