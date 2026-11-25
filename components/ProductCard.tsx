@@ -21,6 +21,8 @@ export default function ProductCard({
   eager?: boolean;
 }) {
   const defaultVariant = getDefaultVariant(product);
+  // Card summary comes from the product's own readable description; no invented specs.
+  const cardSummary = product.readableDescription?.intro?.trim() || product.shortDescription;
 
   return (
     <div className="card group relative flex flex-col overflow-hidden transition hover:-translate-y-1 hover:border-gold">
@@ -63,8 +65,8 @@ export default function ProductCard({
         <Link href={`/product/${product.slug}`}>
           <h2 className="font-extrabold text-navy line-clamp-2 leading-6">{product.name}</h2>
         </Link>
-        {product.shortDescription !== product.name && (
-          <p className="line-clamp-2 text-sm text-navy/60">{product.shortDescription}</p>
+        {cardSummary && cardSummary !== product.name && (
+          <p className="line-clamp-2 text-sm text-navy/60">{cardSummary}</p>
         )}
 
         {product.reviewsCount > 0 && (

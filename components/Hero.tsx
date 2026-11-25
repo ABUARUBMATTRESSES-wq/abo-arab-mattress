@@ -37,7 +37,10 @@ export default function Hero() {
               <MessageCircle size={20} /> اطلب عبر واتساب
             </a>
           </div>
-          <div className="mt-8 flex items-center justify-center gap-2 text-sm font-bold text-white/80 lg:justify-start">
+          <p className="mx-auto mt-5 inline-flex items-center justify-center rounded-full bg-white/10 px-4 py-2 text-sm font-extrabold text-gold lg:mx-0">
+            بننفّذ مقاسات خاصة حسب الطلب
+          </p>
+          <div className="mt-5 flex items-center justify-center gap-2 text-sm font-bold text-white/80 lg:justify-start">
             <ShieldCheck size={18} className="text-gold" /> للاستفسار عن تفاصيل المنتج، تواصل معنا
           </div>
         </div>
