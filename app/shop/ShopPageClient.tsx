@@ -84,12 +84,14 @@ export default function ShopPageClient() {
     setOrDelete("height", filters.heightId, "all");
     setOrDelete("size", filters.sizeId, "all");
     setOrDelete("sort", sortOrder, "default");
+    if (compareIds.length > 0) params.set("ids", compareIds.join(","));
+    else params.delete("ids");
     const qs = params.toString();
     const next = window.location.pathname + (qs ? "?" + qs : "") + window.location.hash;
     if (next !== window.location.pathname + window.location.search + window.location.hash) {
       window.history.replaceState(window.history.state, "", next);
     }
-  }, [filters, sortOrder, hydrated]);
+  }, [filters, sortOrder, compareIds, hydrated]);
 
   const filteredProducts = useMemo(() => {
     return products.filter((p) => {
@@ -134,7 +136,14 @@ export default function ShopPageClient() {
   const visibleProducts = sortedProducts.slice(0, visibleCount);
   const remaining = filteredProducts.length - visibleProducts.length;
 
+  const [compareLimitHit, setCompareLimitHit] = useState(false);
+
   const toggleCompare = (id: string) => {
+    if (!compareIds.includes(id) && compareIds.length >= 3) {
+      setCompareLimitHit(true);
+      return;
+    }
+    setCompareLimitHit(false);
     setCompareIds((prev) => {
       if (prev.includes(id)) return prev.filter((p) => p !== id);
       if (prev.length >= 3) return prev;
@@ -181,6 +190,11 @@ export default function ShopPageClient() {
           <ShopFilters filters={filters} onChange={setFilters} resultCount={filteredProducts.length} />
 
           <div>
+            {compareMode && compareLimitHit && (
+              <p role="status" className="mb-4 rounded-xl bg-gold/15 px-4 py-3 text-sm font-bold text-navy">
+                تقدر تقارن لحد 3 منتجات. شيل منتج عشان تضيف غيره.
+              </p>
+            )}
             {filteredProducts.length === 0 ? (
               <div className="card p-10 text-center text-navy/60">لا توجد منتجات مطابقة لهذه الفلاتر</div>
             ) : (
