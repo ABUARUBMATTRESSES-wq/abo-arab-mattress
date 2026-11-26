@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { ChevronDown } from "lucide-react";
-import { faqs } from "@/lib/products";
+import { faqs } from "@/lib/catalog-helpers";
 
 const faqsWithCustomSizes = [
   {
