@@ -37,7 +37,11 @@ export default function Footer() {
             <li><Link href="/contact" className="hover:text-white">استفسارات الضمان والاستبدال</Link></li>
             <li><Link href="/#faq" className="hover:text-white">الأسئلة الشائعة</Link></li>
             <li><Link href="/returns-policy" className="hover:text-white">سياسة الاستبدال والاسترجاع</Link></li>
+            <li><Link href="/shipping-policy" className="hover:text-white">الشحن والتوصيل</Link></li>
+            <li><Link href="/warranty-policy" className="hover:text-white">الضمان</Link></li>
             <li><Link href="/privacy-policy" className="hover:text-white">سياسة الخصوصية</Link></li>
+            <li><Link href="/terms" className="hover:text-white">شروط الاستخدام</Link></li>
+            <li><Link href="/about" className="hover:text-white">من نحن</Link></li>
           </ul>
         </div>
 
