@@ -1,7 +1,8 @@
 // Product feed for Meta Commerce Manager.
 // Source of truth: the site itself (lib/products.ts variants and prices, lib/catalog-ids.ts ids).
 // Fixed per-group data (titles, categories, own images) lives in lib/meta-feed-groups.json,
-// and the group (PARENT) rows are a fixed list in lib/meta-feed-parents.json.
+// and the group (PARENT) rows are a fixed list in lib/meta-feed-parents.json
+// (their price is computed from the site, see buildRows).
 import { products } from "@/lib/products";
 import { CATALOG_IDS } from "@/lib/catalog-ids";
 import groupsData from "@/lib/meta-feed-groups.json";
@@ -43,6 +44,7 @@ function absImages(list: string): string {
 
 function buildRows(): Row[] {
   const rows: Row[] = [];
+  const groupPrices: Record<string, number[]> = {};
   for (const p of products) {
     const ids = CATALOG_IDS[p.slug];
     if (!ids) continue;
@@ -81,12 +83,18 @@ function buildRows(): Row[] {
         custom_label_3: g[9],
       };
       Object.assign(row, overrides[id] ?? {});
+      (groupPrices[`${p.slug}|${v.heightId}`] ??= []).push(v.price);
       rows.push(row);
     }
   }
   for (const r of parentRows as string[][]) {
     const row: Row = {};
     COLUMNS.forEach((c, i) => { row[c] = r[i] ?? ""; });
+    // Parent price follows the site: "min:slug|height" = lowest item price of that group,
+    // "max:..." = highest (used for the topper/protector parents).
+    const [mode, key] = row.price.split(":");
+    const list = groupPrices[key] ?? [];
+    row.price = list.length ? `${mode === "max" ? Math.max(...list) : Math.min(...list)} EGP` : "";
     row.image_link = row.image_link ? IMG + row.image_link : "";
     row.additional_image_link = absImages(row.additional_image_link);
     rows.push(row);
