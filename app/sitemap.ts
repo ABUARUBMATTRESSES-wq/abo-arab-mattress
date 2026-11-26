@@ -1,5 +1,6 @@
 import type { MetadataRoute } from "next";
 import { products } from "@/lib/products";
+import { brands } from "@/lib/brands";
 
 export const dynamic = "force-static";
 
@@ -12,6 +13,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${SITE_URL}/advisor`, changeFrequency: "monthly", priority: 0.6 },
     { url: `${SITE_URL}/size-guide`, changeFrequency: "monthly", priority: 0.6 },
     { url: `${SITE_URL}/showroom`, changeFrequency: "yearly", priority: 0.5 },
+    { url: `${SITE_URL}/accessories`, changeFrequency: "weekly", priority: 0.6 },
+    ...brands.map((b) => ({ url: `${SITE_URL}/brand/${b.id}`, changeFrequency: "weekly" as const, priority: 0.7 })),
     { url: `${SITE_URL}/contact`, changeFrequency: "monthly", priority: 0.5 },
     { url: `${SITE_URL}/returns-policy`, changeFrequency: "yearly", priority: 0.3 },
     { url: `${SITE_URL}/shipping-policy`, changeFrequency: "yearly", priority: 0.3 },

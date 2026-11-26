@@ -25,6 +25,7 @@ export default function Footer() {
             <li><Link href="/shop?category=pillows" className="hover:text-white">مخدات</Link></li>
             <li><Link href="/shop?category=protectors" className="hover:text-white">واقي مرتبة</Link></li>
             <li><Link href="/shop?category=toppers" className="hover:text-white">طبقات تطرية</Link></li>
+            <li><Link href="/accessories" className="hover:text-white">الإكسسوارات</Link></li>
             <li><Link href="/shop?compare=1" className="hover:text-white">مقارنة الموديلات</Link></li>
           </ul>
         </div>

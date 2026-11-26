@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { LayoutGrid } from "lucide-react";
-import { brands } from "@/lib/brands";
+import { brands, getConstructionClass, constructionClassLabels, constructionClassesList } from "@/lib/brands";
+import { products } from "@/lib/products";
 
 // أبعاد الشعارات الأصلية (لتثبيت المساحة قبل التحميل)
 const logoSize: Record<string, { w: number; h: number }> = {
@@ -12,6 +13,10 @@ const logoSize: Record<string, { w: number; h: number }> = {
 };
 
 export default function BrandsSection() {
+  const mattresses = products.filter((p) => p.category === "mattresses");
+  const types = constructionClassesList
+    .map((c) => ({ c, n: mattresses.filter((p) => getConstructionClass(p) === c).length }))
+    .filter((t) => t.n > 0);
   return (
     <section className="container-app py-14">
       <div className="mb-8 text-center">
@@ -22,7 +27,7 @@ export default function BrandsSection() {
         {brands.map((brand) => (
           <Link
             key={brand.id}
-            href={`/shop?brand=${brand.id}`}
+            href={`/brand/${brand.id}`}
             className="card group flex flex-col items-center gap-4 p-5 text-center transition hover:-translate-y-1 hover:border-gold"
           >
             <span className="flex h-20 w-full items-center justify-center">
@@ -49,6 +54,23 @@ export default function BrandsSection() {
           </span>
           <span className="font-extrabold text-navy">كل الماركات</span>
         </Link>
+      </div>
+      <div className="mt-12 text-center">
+        <h2 className="section-title">تسوق حسب نوع المرتبة</h2>
+        <div className="mt-6 flex flex-wrap justify-center gap-3">
+          {types.map(({ c, n }) => (
+            <Link
+              key={c}
+              href={`/shop?category=mattresses&construction=${c}`}
+              className="card px-5 py-3 text-sm font-extrabold text-navy transition hover:-translate-y-1 hover:border-gold"
+            >
+              {constructionClassLabels[c]} ({n})
+            </Link>
+          ))}
+          <Link href="/accessories" className="card px-5 py-3 text-sm font-extrabold text-navy transition hover:-translate-y-1 hover:border-gold">
+            الإكسسوارات
+          </Link>
+        </div>
       </div>
     </section>
   );
