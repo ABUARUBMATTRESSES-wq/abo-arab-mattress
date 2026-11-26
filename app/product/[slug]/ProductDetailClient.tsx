@@ -280,11 +280,6 @@ export default function ProductDetailClient({ product }: { product: Product }) {
             <div className="grid gap-4 sm:grid-cols-2">
               {product.bundles.map((bundle) => (
                 <div key={bundle.id} className="card flex gap-4 p-5">
-                  <img
-                    src={`https://images.unsplash.com/${bundle.imageQuery}?auto=format&fit=crop&w=300&q=80`}
-                    alt={bundle.title}
-                    className="h-24 w-24 shrink-0 rounded-xl object-cover"
-                  />
                   <div>
                     <p className="font-extrabold text-navy">{bundle.title}</p>
                     <ul className="mt-1 space-y-0.5 text-xs text-navy/60">

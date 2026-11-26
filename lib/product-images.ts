@@ -2,7 +2,7 @@
 export function productImageAtWidth(src: string, width: number): string {
   try {
     const url = new URL(src);
-    if (url.hostname !== "cdn.shopify.com" && url.hostname !== "bedjanssen.com") return src;
+    if (url.hostname !== "cdn.shopify.com") return src;
     if (!url.pathname.includes("/cdn/shop/") && !url.pathname.includes("/s/files/")) return src;
     url.searchParams.set("width", String(width));
     return url.toString();
