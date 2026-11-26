@@ -1,14 +1,35 @@
 "use client";
 
+import { useState } from "react";
 import { Product } from "@/lib/types";
-import { getDefaultVariant } from "@/lib/catalog-helpers";
+import { getDefaultVariant, getVariant } from "@/lib/catalog-helpers";
 import PriceTag from "./PriceTag";
 
-export default function CompareTable({ items }: { items: Product[] }) {
+export default function CompareTable({ items, sizeId: forcedSizeId }: { items: Product[]; sizeId?: string }) {
+  // Sizes that every compared product really offers, so the same-size comparison never invents a price.
+  const commonSizes = items.length === 0 ? [] : items[0].sizes.filter((s) => items.every((p) => p.sizes.some((x) => x.id === s.id)));
+  const [pickedSize, setPickedSize] = useState("");
   if (items.length === 0) return null;
+  const activeSizeId = forcedSizeId ?? (commonSizes.some((s) => s.id === pickedSize) ? pickedSize : "");
+  const activeSize = commonSizes.find((s) => s.id === activeSizeId);
 
   const rows: { label: string; render: (p: Product) => React.ReactNode }[] = [
-    { label: "السعر", render: (p) => {
+    { label: activeSize ? `السعر لمقاس ${activeSize.label}` : "السعر", render: (p) => {
+      if (activeSize) {
+        const rowsForSize = p.heights
+          .map((h) => ({ h, v: getVariant(p, activeSize.id, h.id) }))
+          .filter((x) => x.v);
+        if (rowsForSize.length === 0) return "غير متاح بهذا المقاس";
+        return (
+          <ul className="space-y-1">
+            {rowsForSize.map(({ h, v }) => (
+              <li key={h.id} className="text-xs leading-6 text-navy/70">
+                <span className="font-bold text-navy">{h.label}:</span> {v!.price.toLocaleString("ar-EG")} ج.م
+              </li>
+            ))}
+          </ul>
+        );
+      }
       const v = getDefaultVariant(p);
       if (!v) return "—";
       const size = p.sizes.find(s => s.id === v.sizeId);
@@ -24,9 +45,28 @@ export default function CompareTable({ items }: { items: Product[] }) {
 
   // Hide a row that would be empty for every compared product.
   const hasFirmness = items.some((p) => Boolean(p.firmness));
-  const visibleRows = hasFirmness ? rows : rows.filter((row) => row.label !== "درجة الصلابة");
+  const visibleRows = (hasFirmness ? rows : rows.filter((row) => row.label !== "درجة الصلابة")).filter(
+    (row) => !(activeSize && (row.label === "المقاسات المتاحة"))
+  );
 
   return (
+    <>
+    {forcedSizeId === undefined && commonSizes.length > 0 && (
+      <div className="mb-4 flex flex-wrap items-center gap-3">
+        <label htmlFor="compare-size" className="text-sm font-bold text-navy">قارن على نفس المقاس:</label>
+        <select
+          id="compare-size"
+          value={activeSizeId}
+          onChange={(e) => setPickedSize(e.target.value)}
+          className="rounded-xl border border-navy/20 bg-white px-3 py-2 text-sm font-bold text-navy"
+        >
+          <option value="">المقاس الافتراضي لكل موديل</option>
+          {commonSizes.map((s) => (
+            <option key={s.id} value={s.id}>{s.label}</option>
+          ))}
+        </select>
+      </div>
+    )}
     <div id="compare-table" className="overflow-x-auto rounded-2xl border border-navy/10">
       <table className="w-full min-w-[600px] border-collapse text-sm">
         <thead>
@@ -56,5 +96,6 @@ export default function CompareTable({ items }: { items: Product[] }) {
         </tbody>
       </table>
     </div>
+    </>
   );
 }

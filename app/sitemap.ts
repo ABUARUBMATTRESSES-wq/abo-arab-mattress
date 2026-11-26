@@ -9,6 +9,9 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const staticRoutes: MetadataRoute.Sitemap = [
     { url: `${SITE_URL}/`, changeFrequency: "weekly", priority: 1 },
     { url: `${SITE_URL}/shop`, changeFrequency: "weekly", priority: 0.9 },
+    { url: `${SITE_URL}/advisor`, changeFrequency: "monthly", priority: 0.6 },
+    { url: `${SITE_URL}/size-guide`, changeFrequency: "monthly", priority: 0.6 },
+    { url: `${SITE_URL}/showroom`, changeFrequency: "yearly", priority: 0.5 },
     { url: `${SITE_URL}/contact`, changeFrequency: "monthly", priority: 0.5 },
     { url: `${SITE_URL}/returns-policy`, changeFrequency: "yearly", priority: 0.3 },
     { url: `${SITE_URL}/shipping-policy`, changeFrequency: "yearly", priority: 0.3 },

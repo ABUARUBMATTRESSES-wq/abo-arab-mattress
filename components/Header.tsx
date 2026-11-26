@@ -13,7 +13,11 @@ const navLinks = [
   { href: "/shop?category=toppers", label: "طبقات تطرية" },
   { href: "/shop?category=pillows", label: "مخدات" },
   { href: "/shop?category=protectors", label: "واقي مرتبة" },
+  { href: "/advisor", label: "مساعد الاختيار" },
+  { href: "/size-guide", label: "دليل المقاسات" },
   { href: "/shop?compare=1", label: "مقارنة الموديلات" },
+  { href: "/showroom", label: "المعرض" },
+  { href: "/about", label: "من نحن" },
   { href: "/contact", label: "تواصل معنا" },
 ];
 
@@ -25,8 +29,20 @@ export default function Header() {
 
   return (
     <header className="sticky top-0 z-50 border-b border-navy/10 bg-white/95 backdrop-blur">
-      <div className="bg-navy py-2 text-center text-xs font-bold text-gold sm:text-sm">
-        شحن مجاني للقاهرة والجيزة للطلبات من {siteConfig.freeShippingThreshold.toLocaleString("ar-EG")} {siteConfig.currency}
+      <div className="bg-navy py-2 text-xs font-bold text-gold sm:text-sm">
+        <ul className="container-app flex flex-wrap items-center justify-center gap-x-5 gap-y-1 text-center">
+          <li>
+            <Link href="/shipping-policy" className="hover:underline">
+              الشحن مجاني للقاهرة والجيزة من {siteConfig.freeShippingThreshold.toLocaleString("ar-EG")} {siteConfig.currency}
+            </Link>
+          </li>
+          <li>
+            <Link href="/warranty-policy" className="hover:underline">ضمان 10 سنوات على المراتب</Link>
+          </li>
+          <li className="hidden sm:block">
+            <Link href="/shipping-policy" className="hover:underline">استلام من المعرض مباشرة</Link>
+          </li>
+        </ul>
       </div>
 
       <div className="container-app flex h-20 items-center justify-between gap-2 sm:gap-4">
@@ -38,12 +54,12 @@ export default function Header() {
           </div>
         </Link>
 
-        <nav className="hidden items-center gap-1 lg:flex">
+        <nav className="hidden items-center gap-1 xl:flex">
           {navLinks.map((link) => (
             <Link
               key={link.label}
               href={link.href}
-              className="rounded-lg px-3 py-2 text-sm font-bold text-navy/80 transition hover:bg-navy/5 hover:text-navy"
+              className="whitespace-nowrap rounded-lg px-2 py-2 text-sm font-bold text-navy/80 transition hover:bg-navy/5 hover:text-navy"
             >
               {link.label}
             </Link>
@@ -73,7 +89,7 @@ export default function Header() {
           <button
             aria-label="القائمة"
             onClick={() => setOpen((v) => !v)}
-            className="flex h-11 w-11 items-center justify-center rounded-full border border-navy/10 text-navy transition hover:bg-navy/5 lg:hidden"
+            className="flex h-11 w-11 items-center justify-center rounded-full border border-navy/10 text-navy transition hover:bg-navy/5 xl:hidden"
           >
             {open ? <X size={20} /> : <Menu size={20} />}
           </button>
@@ -100,7 +116,7 @@ export default function Header() {
       )}
 
       {open && (
-        <div className="border-t border-navy/10 bg-white lg:hidden">
+        <div className="border-t border-navy/10 bg-white xl:hidden">
           <nav className="container-app flex flex-col py-2">
             {navLinks.map((link) => (
               <Link

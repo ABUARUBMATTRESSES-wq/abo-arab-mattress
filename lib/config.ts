@@ -16,7 +16,7 @@ export const siteConfig = {
   phoneDisplay: "01002405715",
 
   // العنوان
-  address: "123 حسن المأمون أمام النادي الاهلي مول فرنتشر تاون معرض ابوعرب للمراتب",
+  address: "123 حسن المأمون أمام النادي الاهلي مول فرنتشر تاون معرض ابوعرب للمراتب مدينة نصر",
 
   mapsUrl: "https://maps.app.goo.gl/wJQrP8GuZHez48RB8?g_st=ac",
 
