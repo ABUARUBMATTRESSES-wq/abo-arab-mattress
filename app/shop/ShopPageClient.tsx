@@ -1,7 +1,6 @@
 "use client";
 
 import { useMemo, useState, useEffect } from "react";
-import { useSearchParams } from "next/navigation";
 import { Scale } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -15,7 +14,6 @@ import { getProductBrandId, BrandId, getConstructionClass, ConstructionClass } f
 const PAGE_SIZE = 24;
 
 export default function ShopPageClient() {
-  const searchParams = useSearchParams();
   const [filters, setFilters] = useState<FilterState>(defaultFilters);
   const [compareMode, setCompareMode] = useState(false);
   const [compareIds, setCompareIds] = useState<string[]>([]);
@@ -25,7 +23,9 @@ export default function ShopPageClient() {
 
   const [hydrated, setHydrated] = useState(false);
 
+  // قراءة الفلاتر من الرابط بعد التحميل (بدل useSearchParams) عشان أول كروت المتجر تتولّد مع الصفحة نفسها وتظهر فورًا.
   useEffect(() => {
+    const searchParams = new URLSearchParams(window.location.search);
     const category = searchParams.get("category");
     const brand = searchParams.get("brand");
     const q = searchParams.get("q");
@@ -66,7 +66,7 @@ export default function ShopPageClient() {
     if (q) setSearchTerm(q);
     setHydrated(true);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchParams]);
+  }, []);
 
   // كتابة الفلاتر والترتيب في الرابط (بدون إضافة خطوة في سجل المتصفح)
   useEffect(() => {
