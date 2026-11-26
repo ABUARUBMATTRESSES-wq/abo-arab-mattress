@@ -1,7 +1,7 @@
 "use client";
 
 import { Product } from "@/lib/types";
-import { getDefaultVariant } from "@/lib/products";
+import { getDefaultVariant } from "@/lib/catalog-helpers";
 import PriceTag from "./PriceTag";
 
 export default function CompareTable({ items }: { items: Product[] }) {
