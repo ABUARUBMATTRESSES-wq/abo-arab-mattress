@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { Star, Scale, Sparkles } from "lucide-react";
 import { Product } from "@/lib/types";
-import { getDefaultVariant } from "@/lib/products";
+import { getDefaultVariant } from "@/lib/catalog-helpers";
 import { getCardSummary } from "@/lib/card-summary";
 import PriceTag from "./PriceTag";
 import { productImageAtWidth, productImageSrcSet } from "@/lib/product-images";
