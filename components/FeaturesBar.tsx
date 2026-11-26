@@ -3,11 +3,12 @@ import { ShieldCheck, Truck, RefreshCw, type LucideIcon } from "lucide-react";
 import { siteConfig } from "@/lib/config";
 
 const features: { icon: LucideIcon; title: string; desc: string; href?: string }[] = [
-  { icon: ShieldCheck, title: "الضمان", desc: "تفاصيل الضمان في صفحة كل منتج" },
+  { icon: ShieldCheck, title: "الضمان", desc: "تفاصيل الضمان في صفحة كل منتج", href: "/warranty-policy" },
   {
     icon: Truck,
     title: "الشحن",
     desc: `مجاني للقاهرة والجيزة للطلبات من ${siteConfig.freeShippingThreshold.toLocaleString("ar-EG")} ${siteConfig.currency}`,
+    href: "/shipping-policy",
   },
   { icon: RefreshCw, title: "الاستبدال", desc: "حسب سياسة الاستبدال والاسترجاع", href: "/returns-policy" },
 ];
