@@ -5,7 +5,7 @@ import { brands } from "@/lib/brands";
 // أبعاد الشعارات الأصلية (لتثبيت المساحة قبل التحميل)
 const logoSize: Record<string, { w: number; h: number }> = {
   "/brands/taki.png": { w: 400, h: 135 },
-  "/brands/forbed.png": { w: 200, h: 136 },
+  "/brands/1-forbed.png": { w: 200, h: 136 },
   "/brands/janssen.png": { w: 240, h: 72 },
   "/brands/englander.jpg": { w: 400, h: 209 },
   "/brands/wonderland.png": { w: 382, h: 93 },

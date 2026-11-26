@@ -24,7 +24,7 @@ export const brands: Brand[] = [
   {
     id: "forbed",
     name: "فوربد",
-    logo: "/brands/forbed.png",
+    logo: "/brands/1-forbed.png",
     keywords: ["فوربد"],
   },
   {
