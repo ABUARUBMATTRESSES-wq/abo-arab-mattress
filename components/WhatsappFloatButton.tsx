@@ -16,7 +16,7 @@ export default function WhatsappFloatButton({ message }: { message?: string }) {
           href={link}
           target="_blank"
           rel="noreferrer"
-          className="flex h-11 items-center gap-2 rounded-full bg-[#25D366] px-6 text-sm font-extrabold text-white shadow-luxury active:scale-95"
+          className="flex h-11 items-center gap-2 rounded-full bg-[#188741] px-6 text-sm font-extrabold text-white shadow-luxury active:scale-95"
         >
           <MessageCircle size={20} aria-hidden="true" />
           تواصل عبر واتساب
@@ -30,7 +30,7 @@ export default function WhatsappFloatButton({ message }: { message?: string }) {
           rel="noreferrer"
           aria-label="تواصل عبر واتساب"
           style={{ bottom: "calc(var(--compare-bar-height, 0px) + 1.25rem)" }}
-          className="fixed bottom-5 left-5 z-50 hidden h-14 w-14 items-center justify-center rounded-full bg-[#25D366] text-white shadow-luxury transition hover:scale-110 active:scale-95 md:flex"
+          className="fixed bottom-5 left-5 z-50 hidden h-14 w-14 items-center justify-center rounded-full bg-[#188741] text-white shadow-luxury transition hover:scale-110 active:scale-95 md:flex"
         >
           <MessageCircle size={26} />
         </a>
