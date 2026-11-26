@@ -63,10 +63,26 @@ export default function ProductDetailClient({ product }: { product: Product }) {
   );
 
   useEffect(() => {
+    // Report the variant the visitor actually opened (from the URL), not the default.
+    const params = new URLSearchParams(window.location.search);
+    const s = params.get("size");
+    const h = params.get("height");
+    const validSize = s && product.sizes.some((x) => x.id === s) ? s : undefined;
+    const validHeight = h && product.heights.some((x) => x.id === h) ? h : undefined;
+    const fromUrl = validSize || validHeight
+      ? product.variantPrices.find((v) =>
+          (!validSize || v.sizeId === validSize) && (!validHeight || v.heightId === validHeight))
+      : undefined;
+    const vSize = fromUrl?.sizeId ?? product.sizes[0]?.id;
+    const vHeight = fromUrl?.heightId ?? product.heights[0]?.id;
+    const id = CATALOG_IDS[product.slug]?.v[`${vSize}|${vHeight}`] ?? product.id;
+    const vPrice = fromUrl?.price ?? variant?.price;
     trackEvent("ViewContent", {
       content_name: product.name,
-      content_ids: [CATALOG_IDS[product.slug]?.v[`${sizeId}|${heightId}`] ?? product.id],
-      value: variant?.price,
+      content_type: "product",
+      content_ids: [id],
+      contents: [{ id, quantity: 1 }],
+      value: vPrice,
       currency: "EGP",
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -93,7 +109,9 @@ export default function ProductDetailClient({ product }: { product: Product }) {
     });
     trackEvent("AddToCart", {
       content_name: product.name,
+      content_type: "product",
       content_ids: [CATALOG_IDS[product.slug]?.v[`${sizeId}|${heightId}`] ?? product.id],
+      contents: [{ id: CATALOG_IDS[product.slug]?.v[`${sizeId}|${heightId}`] ?? product.id, quantity }],
       value: variant.price * quantity,
       currency: "EGP",
     });
@@ -106,7 +124,9 @@ export default function ProductDetailClient({ product }: { product: Product }) {
   const handleWhatsappClick = () => {
     trackEvent("InitiateCheckout", {
       content_name: product.name,
+      content_type: "product",
       content_ids: [CATALOG_IDS[product.slug]?.v[`${sizeId}|${heightId}`] ?? product.id],
+      contents: [{ id: CATALOG_IDS[product.slug]?.v[`${sizeId}|${heightId}`] ?? product.id, quantity }],
       value: variant.price * quantity,
       currency: "EGP",
     });
