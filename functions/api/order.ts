@@ -1,7 +1,7 @@
 import { products, getVariant } from "../../lib/products";
 import { siteConfig, governorates } from "../../lib/config";
 import { calculateShipping } from "../../lib/shipping";
-import { newTrackingToken } from "./_session";
+import { newTrackingToken, rateLimit } from "./_session";
 
 interface Env {
   DB: D1Database;
@@ -51,6 +51,25 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
   if (!verify || !verify.success) {
     return json({ ok: false, error: "verification failed" }, 403);
   }
+
+  // Abuse guards, applied only after a human check passed. Both fail open so a
+  // database error never blocks a real customer.
+  // 1) Very high per-IP ceiling: far above any real shared network (mobile carrier NAT, office).
+  const ip = request.headers.get("CF-Connecting-IP") || "unknown";
+  if (!(await rateLimit(env.DB, `order:${ip}`, 40, 600))) {
+    return json({ ok: false, error: "too many requests" }, 429);
+  }
+  // 2) Per-phone cap on NEW orders: counts saved orders for this phone in the last hour,
+  //    excluding this order id so a retry of the same order is never blocked.
+  try {
+    const since = new Date(Date.now() - 3600 * 1000).toISOString();
+    const recent: any = await env.DB.prepare(
+      "SELECT COUNT(*) AS n FROM orders WHERE phone = ? AND created_at > ? AND id != ?"
+    ).bind(phone, since, id).first();
+    if (Number(recent && recent.n) >= 5) {
+      return json({ ok: false, error: "too many orders for this phone" }, 429);
+    }
+  } catch { /* fail open */ }
 
   // Rebuild every line from trusted catalog data; client-sent prices are ignored.
   const lines: { productId: string; name: string; size: string; height: string; quantity: number; unitPrice: number }[] = [];
