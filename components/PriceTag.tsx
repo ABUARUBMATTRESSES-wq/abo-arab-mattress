@@ -1,4 +1,4 @@
-import { computeDiscountPercent, formatPrice } from "@/lib/products";
+import { computeDiscountPercent, formatPrice } from "@/lib/catalog-helpers";
 import { siteConfig } from "@/lib/config";
 
 export default function PriceTag({
