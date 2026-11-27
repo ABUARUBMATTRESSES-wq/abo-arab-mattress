@@ -121,3 +121,34 @@ body {
   .announce-track { animation: none; width: 100%; justify-content: center; flex-wrap: wrap; }
   .announce-track > ul:nth-child(2) { display: none; }
 }
+
+
+/* Shine: a light gold highlight sweeps across the showroom name. Static for reduced motion. */
+.shine-text {
+  background-image: linear-gradient(110deg, #0b2545 0%, #0b2545 42%, #d4af37 50%, #0b2545 58%, #0b2545 100%);
+  background-size: 250% 100%;
+  background-position: 100% 0;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  animation: shineSweep 5s ease-in-out infinite;
+}
+
+@keyframes shineSweep {
+  0%, 55% {
+    background-position: 100% 0;
+  }
+  100% {
+    background-position: 0% 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .shine-text {
+    animation: none;
+    background-image: none;
+    -webkit-text-fill-color: currentColor;
+    color: #0b2545;
+  }
+}
