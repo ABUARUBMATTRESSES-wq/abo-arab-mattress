@@ -22,7 +22,7 @@ const config: Config = {
         paper: "#F8FAFC",
       },
       fontFamily: {
-        cairo: ["var(--font-cairo)", "Tajawal", "sans-serif"],
+        cairo: ["var(--font-cairo)", "Tahoma", "sans-serif"],
       },
       boxShadow: {
         luxury: "0 10px 40px -10px rgba(11,37,69,0.25)",
