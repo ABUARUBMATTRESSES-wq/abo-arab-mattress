@@ -16,9 +16,9 @@ export default function WhatsappFloatButton({ message }: { message?: string }) {
           href={link}
           target="_blank"
           rel="noreferrer"
-          className="flex h-11 items-center gap-2 rounded-full bg-[#188741] px-6 text-sm font-extrabold text-white shadow-luxury active:scale-95"
+          className="flex h-10 items-center gap-2 rounded-full bg-[#188741] px-5 text-sm font-extrabold text-white shadow-luxury active:scale-95"
         >
-          <MessageCircle size={20} aria-hidden="true" />
+          <MessageCircle size={18} aria-hidden="true" />
           تواصل عبر واتساب
         </a>
       </div>
