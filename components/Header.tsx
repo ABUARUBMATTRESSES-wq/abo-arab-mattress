@@ -36,7 +36,7 @@ export default function Header() {
         <Link href="/" className="flex min-w-0 items-center gap-2 xl:shrink-0">
           <img src="/brand-mark.svg" alt="شعار أبو عرب" width="44" height="56" className="h-14 w-11 shrink-0 rounded-lg object-contain" />
           <div className="leading-tight xl:whitespace-nowrap">
-            <p className="text-base font-extrabold text-navy min-[400px]:text-lg sm:text-xl">{siteConfig.brandNameAr}</p>
+            <p className="shine-text text-base font-extrabold text-navy min-[400px]:text-lg sm:text-xl">{siteConfig.brandNameAr}</p>
             <p className="hidden text-[11px] font-semibold tracking-wide text-gold-dark sm:block">{siteConfig.slogan}</p>
           </div>
         </Link>
