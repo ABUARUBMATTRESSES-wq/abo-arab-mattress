@@ -153,6 +153,17 @@ export default function ShopPageClient() {
 
   const compareProducts = products.filter((p) => compareIds.includes(p.id));
 
+  const compareButton = (
+    <button
+      onClick={() => setCompareMode((v) => !v)}
+      className={`flex h-full items-center gap-2 whitespace-nowrap rounded-xl border px-4 py-2.5 text-sm font-bold transition ${
+        compareMode ? "border-gold bg-gold-gradient text-navy" : "border-navy/15 text-navy"
+      }`}
+    >
+      <Scale size={18} /> وضع المقارنة
+    </button>
+  );
+
   return (
     <>
       <Header />
@@ -175,19 +186,12 @@ export default function ShopPageClient() {
               <option value="desc">السعر: الأغلى أولاً</option>
             </select>
           </label>
-          <button
-            onClick={() => setCompareMode((v) => !v)}
-            className={`flex items-center gap-2 rounded-xl border px-4 py-2.5 text-sm font-bold transition ${
-              compareMode ? "border-gold bg-gold-gradient text-navy" : "border-navy/15 text-navy"
-            }`}
-          >
-            <Scale size={18} /> وضع المقارنة
-          </button>
+          <div className="hidden lg:block">{compareButton}</div>
           </div>
         </div>
 
         <div className="grid gap-6 lg:grid-cols-[260px_1fr]">
-          <ShopFilters filters={filters} onChange={setFilters} resultCount={filteredProducts.length} />
+          <ShopFilters filters={filters} onChange={setFilters} resultCount={filteredProducts.length} mobileExtra={compareButton} />
 
           <div>
             {compareMode && compareLimitHit && (

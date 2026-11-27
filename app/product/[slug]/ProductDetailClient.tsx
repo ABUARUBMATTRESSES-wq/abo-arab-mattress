@@ -173,7 +173,7 @@ export default function ProductDetailClient({ product }: { product: Product }) {
               )}
             </div>
             <h1 className="text-2xl font-extrabold text-navy sm:text-3xl">{product.name}</h1>
-            <p className="mt-2 text-navy/60">{product.shortDescription}</p>
+            <p className="mt-2 text-navy/80">{product.shortDescription}</p>
 
             <div className="my-5 flex flex-wrap items-center gap-3">
               <PriceTag price={variant.price} originalPrice={variant.originalPrice} size="lg" />
@@ -272,6 +272,19 @@ export default function ProductDetailClient({ product }: { product: Product }) {
               >
                 <MessageCircle size={20} /> طلب سريع عبر واتساب
               </a>
+            </div>
+
+            {/* شريط ثابت على الموبايل: السعر الإجمالي وزر الإضافة للسلة (نفس الدالة والتتبع الموجودين) */}
+            <div className="fixed inset-x-0 bottom-14 z-40 flex items-center justify-between gap-3 border-t border-navy/10 bg-white px-4 py-2 shadow-luxury md:hidden">
+              <div className="min-w-0">
+                <p className="text-xs font-bold text-navy/60">الإجمالي</p>
+                <p className="truncate text-lg font-extrabold text-navy">
+                  {formatPrice(variant.price * quantity)} {siteConfig.currency}
+                </p>
+              </div>
+              <button onClick={handleAddToCart} className="btn-primary !py-2.5 whitespace-nowrap">
+                <ShoppingCart size={18} /> أضف إلى السلة
+              </button>
             </div>
 
             {addedMessage && (

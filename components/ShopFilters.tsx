@@ -1,7 +1,7 @@
 "use client";
 
 import { SlidersHorizontal, X } from "lucide-react";
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 import { categories, springTypesList, firmnessList, allHeightsList, allSizesList } from "@/lib/products";
 import { CategorySlug, Firmness, SpringType } from "@/lib/types";
 import { brands, BrandId, constructionClassesList, constructionClassLabels, ConstructionClass } from "@/lib/brands";
@@ -30,10 +30,12 @@ export default function ShopFilters({
   filters,
   onChange,
   resultCount,
+  mobileExtra,
 }: {
   filters: FilterState;
   onChange: (filters: FilterState) => void;
   resultCount?: number;
+  mobileExtra?: ReactNode;
 }) {
   const [mobileOpen, setMobileOpen] = useState(false);
 
@@ -155,12 +157,12 @@ export default function ShopFilters({
 
   return (
     <>
-      <button
-        onClick={() => setMobileOpen(true)}
-        className="btn-outline mb-4 w-full lg:hidden"
-      >
-        <SlidersHorizontal size={18} /> الفلاتر
-      </button>
+      <div className="mb-4 flex items-stretch gap-3 lg:hidden">
+        <button onClick={() => setMobileOpen(true)} className="btn-outline min-w-0 flex-1">
+          <SlidersHorizontal size={18} /> الفلاتر
+        </button>
+        {mobileExtra}
+      </div>
 
       <aside className="card hidden h-fit p-5 lg:block">{content}</aside>
 

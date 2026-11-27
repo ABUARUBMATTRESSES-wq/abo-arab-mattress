@@ -62,12 +62,12 @@ export default function ProductCard({
         )}
       </Link>
 
-      <div className="flex flex-1 flex-col gap-2 p-4">
+      <div className="flex flex-1 flex-col gap-2 p-3 sm:p-4">
         <Link href={`/product/${product.slug}`}>
-          <h2 className="font-extrabold text-navy line-clamp-2 leading-6">{product.name}</h2>
+          <h2 className="text-[15px] font-extrabold text-navy line-clamp-2 leading-6 sm:text-base">{product.name}</h2>
         </Link>
         {cardSummary && cardSummary !== product.name && (
-          <p className="line-clamp-2 text-sm text-navy/60">{cardSummary}</p>
+          <p className="line-clamp-2 text-xs text-navy/60 sm:text-sm">{cardSummary}</p>
         )}
         {product.reviewsCount > 0 && (
           <div className="mt-1 flex items-center gap-1 text-xs text-navy/60">

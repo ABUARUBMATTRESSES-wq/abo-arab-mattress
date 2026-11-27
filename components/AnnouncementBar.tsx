@@ -27,7 +27,7 @@ export default function AnnouncementBar() {
     </ul>
   );
   return (
-    <div className="announce bg-navy py-2 text-xs font-bold text-gold sm:text-sm" role="region" aria-label="إعلانات المعرض">
+    <div className="announce bg-navy py-2 text-sm font-bold text-gold sm:text-base" role="region" aria-label="إعلانات المعرض">
       <div dir="ltr" className="overflow-hidden">
         <div dir="rtl" className="announce-track flex w-max">
           {row(0)}
