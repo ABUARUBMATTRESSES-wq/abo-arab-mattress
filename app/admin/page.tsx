@@ -47,6 +47,31 @@ function formatDate(iso: string): string {
   return d.toLocaleString("ar-EG", { day: "numeric", month: "long", hour: "numeric", minute: "2-digit" });
 }
 
+const CAIRO_DAY = new Intl.DateTimeFormat("en-CA", { timeZone: "Africa/Cairo", year: "numeric", month: "2-digit", day: "2-digit" });
+
+function dayKey(iso: string): string {
+  const d = new Date(iso);
+  return Number.isNaN(d.getTime()) ? "" : CAIRO_DAY.format(d);
+}
+
+// ملخص للقراءة فقط، محسوب من الطلبات الظاهرة في القائمة (آخر 100 طلب). مفيش تغيير في البيانات.
+function summarizeOrders(rows: OrderRow[]) {
+  const today = dayKey(new Date().toISOString());
+  const weekKeys = new Set<string>();
+  for (let i = 0; i < 7; i++) weekKeys.add(dayKey(new Date(Date.now() - i * 86400000).toISOString()));
+  let todayCount = 0, todaySum = 0, weekCount = 0, weekSum = 0;
+  const byStatus: Record<string, number> = {};
+  for (const o of rows) {
+    const k = dayKey(o.created_at);
+    const total = Number(o.total_egp) || 0;
+    if (k === today) { todayCount++; todaySum += total; }
+    if (weekKeys.has(k)) { weekCount++; weekSum += total; }
+    const st = normalizeStatus(o.status);
+    byStatus[st] = (byStatus[st] || 0) + 1;
+  }
+  return { todayCount, todaySum, weekCount, weekSum, byStatus };
+}
+
 export default function AdminPage() {
   const [unlocked, setUnlocked] = useState(false);
   const [pass, setPass] = useState("");
@@ -171,6 +196,38 @@ export default function AdminPage() {
                 </div>
               </div>
               {listError && <p className="mb-4 rounded-xl bg-red-50 p-4 text-center font-bold text-red-700">{listError}</p>}
+              {orders.length > 0 && (() => {
+                const sm = summarizeOrders(orders);
+                const money = (n: number) => `${n.toLocaleString("ar-EG")} ج.م`;
+                return (
+                  <section className="mb-8" aria-label="ملخص الطلبات">
+                    <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+                      <div className="card p-4 text-center">
+                        <p className="text-sm font-bold text-navy/70">النهارده</p>
+                        <p className="mt-1 text-2xl font-extrabold text-navy">{sm.todayCount.toLocaleString("ar-EG")} طلب</p>
+                        <p className="text-sm font-bold text-[#85691a]">{money(sm.todaySum)}</p>
+                      </div>
+                      <div className="card p-4 text-center">
+                        <p className="text-sm font-bold text-navy/70">آخر 7 أيام</p>
+                        <p className="mt-1 text-2xl font-extrabold text-navy">{sm.weekCount.toLocaleString("ar-EG")} طلب</p>
+                        <p className="text-sm font-bold text-[#85691a]">{money(sm.weekSum)}</p>
+                      </div>
+                      <div className="card col-span-2 p-4 sm:col-span-1">
+                        <p className="mb-2 text-center text-sm font-bold text-navy/70">حسب الحالة</p>
+                        <ul className="space-y-1 text-sm font-bold text-navy">
+                          {STATUSES.map((st) => (
+                            <li key={st.key} className="flex items-center justify-between">
+                              <span>{st.label}</span>
+                              <span>{(sm.byStatus[st.key] || 0).toLocaleString("ar-EG")}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    </div>
+                    <p className="mt-2 text-center text-xs text-navy/50">الأرقام من آخر 100 طلب في القائمة، وبتشمل أي طلب تجريبي. للقراءة بس.</p>
+                  </section>
+                );
+              })()}
               {orders.length === 0 && !listError && (
                 <p className="rounded-xl bg-navy/5 p-6 text-center font-bold text-navy/60">مفيش طلبات لسه.</p>
               )}
