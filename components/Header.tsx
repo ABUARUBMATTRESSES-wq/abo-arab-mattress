@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 import { Menu, X, Search, ShoppingCart } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 import { siteConfig } from "@/lib/config";
+import AnnouncementBar from "@/components/AnnouncementBar";
 
 const navLinks = [
   { href: "/", label: "الرئيسية" },
@@ -29,21 +30,7 @@ export default function Header() {
 
   return (
     <header className="sticky top-0 z-50 border-b border-navy/10 bg-white/95 backdrop-blur">
-      <div className="bg-navy py-2 text-xs font-bold text-gold sm:text-sm">
-        <ul className="container-app flex flex-wrap items-center justify-center gap-x-5 gap-y-1 text-center">
-          <li>
-            <Link href="/shipping-policy" className="hover:underline">
-              الشحن مجاني للقاهرة والجيزة من {siteConfig.freeShippingThreshold.toLocaleString("ar-EG")} {siteConfig.currency}
-            </Link>
-          </li>
-          <li>
-            <Link href="/warranty-policy" className="hover:underline">ضمان 10 سنوات على المراتب</Link>
-          </li>
-          <li className="hidden sm:block">
-            <Link href="/shipping-policy" className="hover:underline">استلام من المعرض مباشرة</Link>
-          </li>
-        </ul>
-      </div>
+      <AnnouncementBar />
 
       <div className="container-app flex h-20 items-center justify-between gap-2 sm:gap-4">
         <Link href="/" className="flex min-w-0 items-center gap-2">

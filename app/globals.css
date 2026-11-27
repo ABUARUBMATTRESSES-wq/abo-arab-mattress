@@ -109,3 +109,15 @@ body {
 .text-navy\/60 {
   color: rgb(11 37 69 / 0.7);
 }
+
+/* الشريط المتحرك: يقف عند اللمس أو الوقوف بالماوس، ويبقى ثابت لمن يفضّل تقليل الحركة. */
+@keyframes announce-scroll {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+.announce-track { animation: announce-scroll 28s linear infinite; }
+.announce:hover .announce-track, .announce:focus-within .announce-track, .announce:active .announce-track { animation-play-state: paused; }
+@media (prefers-reduced-motion: reduce) {
+  .announce-track { animation: none; width: 100%; justify-content: center; flex-wrap: wrap; }
+  .announce-track > ul:nth-child(2) { display: none; }
+}
