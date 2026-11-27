@@ -33,20 +33,20 @@ export default function Header() {
       <AnnouncementBar />
 
       <div className="container-app flex h-20 items-center justify-between gap-2 sm:gap-4">
-        <Link href="/" className="flex min-w-0 items-center gap-2">
+        <Link href="/" className="flex min-w-0 items-center gap-2 xl:shrink-0">
           <img src="/brand-mark.svg" alt="شعار أبو عرب" width="44" height="56" className="h-14 w-11 shrink-0 rounded-lg object-contain" />
-          <div className="leading-tight">
+          <div className="leading-tight xl:whitespace-nowrap">
             <p className="text-base font-extrabold text-navy min-[400px]:text-lg sm:text-xl">{siteConfig.brandNameAr}</p>
             <p className="hidden text-[11px] font-semibold tracking-wide text-gold-dark sm:block">{siteConfig.slogan}</p>
           </div>
         </Link>
 
-        <nav className="hidden items-center gap-1 xl:flex">
+        <nav className="hidden items-center gap-0.5 xl:flex 2xl:gap-1">
           {navLinks.map((link) => (
             <Link
               key={link.label}
               href={link.href}
-              className="whitespace-nowrap rounded-lg px-2 py-2 text-sm font-bold text-navy/80 transition hover:bg-navy/5 hover:text-navy"
+              className="whitespace-nowrap rounded-lg px-1 py-2 text-[13px] font-bold 2xl:px-2 2xl:text-sm text-navy/80 transition hover:bg-navy/5 hover:text-navy"
             >
               {link.label}
             </Link>
