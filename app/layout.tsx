@@ -34,7 +34,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="ar" dir="rtl">
       <head>
-        <link rel="preload" href="/fonts/cairo-arabic.woff2" as="font" type="font/woff2" crossOrigin="anonymous" />
+        <link rel="preload" href="/fonts/1-cairo-arabic.woff2" as="font" type="font/woff2" crossOrigin="anonymous" />
       </head>
       <body className="pb-14 font-cairo antialiased md:pb-0">
         <MetaPixelScript />
